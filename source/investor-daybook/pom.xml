@@ -14,8 +14,9 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring.version>4.3.9.RELEASE</spring.version>
-        <springsecurity.version>4.2.3.RELEASE</springsecurity.version>
+        <spring-framework.version>4.3.9.RELEASE</spring-framework.version>
+        <spring-security.version>4.2.3.RELEASE</spring-security.version>
+        <hibernate.version>4.3.11.Final</hibernate.version>
         <mockito.version>1.10.19</mockito.version>
         <junit.version>4.12</junit.version>
     </properties>
