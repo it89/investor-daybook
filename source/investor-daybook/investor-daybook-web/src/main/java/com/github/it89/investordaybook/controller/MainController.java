@@ -1,6 +1,7 @@
 package com.github.it89.investordaybook.controller;
 
 import com.github.it89.investordaybook.DoSomething;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MainController {
+    @Autowired
+    private DoSomething doSomething;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {
         return "home";
@@ -26,7 +30,7 @@ public class MainController {
     @ResponseBody
     public String doSomething() {
         // TODO: For test only!
-        return new DoSomething().doIt();
+        return doSomething.doIt();
     }
 
     private String getUserName() {

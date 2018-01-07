@@ -24,13 +24,12 @@ public class AppUserDAOImpl implements AppUserDAO {
 
     @Override
     public AppUser findByLogin(String login) {
-        /*String sql = "select * from app_user where upper(login) = upper(:login)";
+        String sql = "select * from app_user where upper(login) = upper(:login)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("login", login);
 
-        return jdbcTemplate.queryForObject(sql, params, new AppUserRowMapper());*/
-        return new AppUser(1, "2", "3");
+        return jdbcTemplate.queryForObject(sql, params, new AppUserRowMapper());
     }
 
     @Override
