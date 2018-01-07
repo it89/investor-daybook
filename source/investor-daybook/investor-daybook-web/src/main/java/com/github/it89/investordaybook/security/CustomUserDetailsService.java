@@ -1,7 +1,7 @@
 package com.github.it89.investordaybook.security;
 
-import com.github.it89.investordaybook.model.User;
-import com.github.it89.investordaybook.service.UserService;
+import com.github.it89.investordaybook.model.AppUser;
+import com.github.it89.investordaybook.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,20 +19,24 @@ import java.util.List;
 public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Autowired
-	private UserService userService;
+	private AppUserService appUserService;
 	
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String ssoId)
 			throws UsernameNotFoundException {
-		User user = userService.findByLogin(ssoId);
-		if(user == null){
+		//AppUser appUser = appUserService.findByLogin(ssoId);
+		//TODO: !!!
+        AppUser appUser = new AppUser();
+        appUser.setLogin("test");
+        appUser.setPassword("test");
+		if(appUser == null){
 			throw new UsernameNotFoundException("User not found");
 		}
-			return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(),
-				 true, true, true, true, getGrantedAuthorities(user));
+			return new org.springframework.security.core.userdetails.User(appUser.getLogin(), appUser.getPassword(),
+				 true, true, true, true, getGrantedAuthorities(appUser));
 	}
 
-    private List<GrantedAuthority> getGrantedAuthorities(User user){
+    private List<GrantedAuthority> getGrantedAuthorities(AppUser appUser){
 		// TODO: Create roles
         List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
