@@ -8,7 +8,7 @@ public class SecurityStock extends Security {
     }
 
     public static class Builder {
-        private long id;
+        private Long id;
         private final String isin;
         private String ticker;
         private String caption;
@@ -19,7 +19,7 @@ public class SecurityStock extends Security {
             this.isin = isin;
         }
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }
@@ -56,6 +56,16 @@ public class SecurityStock extends Security {
         }
     }
 
-
-
+    @Override
+    public String toString() {
+        return "SecurityStock{" +
+                "id=" + id +
+                ", isin='" + isin + '\'' +
+                ", type=" + type +
+                ", ticker='" + ticker + '\'' +
+                ", caption='" + caption + '\'' +
+                ", codeGRN='" + codeGRN + '\'' +
+                ", appUser=" + appUser +
+                '}';
+    }
 }

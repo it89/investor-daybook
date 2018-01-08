@@ -25,6 +25,25 @@ public class AppUserDAOImpl implements AppUserDAO {
     }
 
     @Override
+    public AppUser findById(long id) {
+        String sql = "select * from app_user where id = :id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+
+        List<AppUser> queryList = jdbcTemplate.query(sql, params, new AppUserRowMapper());
+
+        if (queryList.size() == 1) {
+            return queryList.get(0);
+        }
+        else if (queryList.isEmpty()) {
+            return null;
+        } else {
+            throw new AssertionError("Too many rows");
+        }
+    }
+
+    @Override
     public AppUser findByLogin(String login) {
         String sql = "select * from app_user where upper(login) = upper(:login)";
 

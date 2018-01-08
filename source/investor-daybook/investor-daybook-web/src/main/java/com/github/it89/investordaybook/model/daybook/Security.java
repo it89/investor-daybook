@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class Security {
     @Nullable
-    protected long id;
+    protected Long id;
     protected String isin;
     protected SecurityType type;
     protected String ticker;
@@ -14,11 +14,11 @@ public abstract class Security {
     protected String codeGRN;
     protected AppUser appUser;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -31,6 +31,10 @@ public abstract class Security {
             throw new IllegalArgumentException("isin must be specified");
         }
         this.isin = isin;
+    }
+
+    public SecurityType getType() {
+        return type;
     }
 
     public String getTicker() {
