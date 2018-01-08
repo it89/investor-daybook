@@ -1,7 +1,7 @@
 package com.github.it89.investordaybook.dao;
 
-import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.Security;
+import com.github.it89.investordaybook.model.daybook.SecurityBond;
 import com.github.it89.investordaybook.model.daybook.SecurityStock;
 import com.github.it89.investordaybook.model.daybook.SecurityType;
 import com.github.it89.investordaybook.service.AppUserService;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -96,6 +95,14 @@ public class SecurityDAOImpl implements SecurityDAO {
             Security security;
             if (securityType == SecurityType.STOCK) {
                 security = new SecurityStock.Builder(rs.getString("isin"))
+                        .id(rs.getLong("id"))
+                        .ticker(rs.getString("ticker"))
+                        .caption(rs.getString("caption"))
+                        .codeGRN(rs.getString("code_grn"))
+                        .appUser(appUserService.findById(rs.getLong("id")))
+                        .build();
+            } else if (securityType == SecurityType.BOND) {
+                security = new SecurityBond.Builder(rs.getString("isin"))
                         .id(rs.getLong("id"))
                         .ticker(rs.getString("ticker"))
                         .caption(rs.getString("caption"))
