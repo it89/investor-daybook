@@ -1,6 +1,7 @@
 package com.github.it89.investordaybook.dao;
 
 import com.github.it89.investordaybook.model.AppUser;
+import com.sun.xml.internal.ws.policy.spi.AssertionCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 @Qualifier("appUserDAO")
@@ -29,7 +31,16 @@ public class AppUserDAOImpl implements AppUserDAO {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("login", login);
 
-        return jdbcTemplate.queryForObject(sql, params, new AppUserRowMapper());
+        List<AppUser> queryList = jdbcTemplate.query(sql, params, new AppUserRowMapper());
+
+        if (queryList.size() == 1) {
+            return queryList.get(0);
+        }
+        else if (queryList.isEmpty()) {
+            return null;
+        } else {
+            throw new AssertionError("Too many rows");
+        }
     }
 
     @Override
