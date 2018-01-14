@@ -1,7 +1,6 @@
 package com.github.it89.investordaybook.dao;
 
 import com.github.it89.investordaybook.model.AppUser;
-import com.sun.xml.internal.ws.policy.spi.AssertionCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,12 +15,24 @@ import java.util.List;
 
 @Repository
 @Qualifier("appUserDAO")
-public class AppUserDAOImpl implements AppUserDAO {
+public class AppUserDAOImpl extends AbstractDAO<AppUser> implements AppUserDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Override
+    public AppUser findById(long id) {
+        String sql = "select * from app_user where id = :id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+
+        List<AppUser> queryList = jdbcTemplate.query(sql, params, new AppUserRowMapper());
+
+        return getOneRecord(queryList);
     }
 
     @Override
@@ -52,8 +63,7 @@ public class AppUserDAOImpl implements AppUserDAO {
 
         @Override
         public AppUser mapRow(ResultSet rs, int rowNum) throws SQLException {
-            AppUser appUser = new AppUser(rs.getLong("id"), rs.getString("login"), rs.getString("password"));
-            return appUser;
+            return new AppUser(rs.getLong("id"), rs.getString("login"), rs.getString("password"));
         }
 
     }

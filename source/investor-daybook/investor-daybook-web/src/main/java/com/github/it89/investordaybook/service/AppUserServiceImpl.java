@@ -13,6 +13,11 @@ public class AppUserServiceImpl implements AppUserService {
     private AppUserDAO dao;
 
     @Override
+    public AppUser findById(long id) {
+        return null;
+    }
+
+    @Override
     public AppUser findByLogin(String login) {
         AppUser appUser = dao.findByLogin(login);
         return appUser;
