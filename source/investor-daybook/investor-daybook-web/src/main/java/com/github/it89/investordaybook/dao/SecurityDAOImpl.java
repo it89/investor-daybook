@@ -19,8 +19,15 @@ import java.util.List;
 
 @Repository
 @Qualifier("securityDAO")
-public class SecurityDAOImpl implements SecurityDAO {
+public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
+
+    private static final String ID = "id";
+    private static final String ISIN = "isin";
+    private static final String TICKER = "ticker";
+    private static final String CAPTION = "caption";
+    private static final String CODE_GRN = "code_grn";
+
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -34,17 +41,10 @@ public class SecurityDAOImpl implements SecurityDAO {
                 "      WHERE s.id_security_type = st.id AND s.id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
+        params.addValue(ID, id);
         List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper());
 
-        if (queryList.size() == 1) {
-            return queryList.get(0);
-        }
-        else if (queryList.isEmpty()) {
-            return null;
-        } else {
-            throw new AssertionError("Too many rows");
-        }
+        return getOneRecord(queryList);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SecurityDAOImpl implements SecurityDAO {
         String sql = "SELECT max(id) FROM security WHERE UPPER(isin) = UPPER(:isin) and id_app_user = :idAppUser";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-        namedParameters.addValue("isin", isin);
+        namedParameters.addValue(ISIN, isin);
         namedParameters.addValue("idAppUser", idAppUser);
 
         return jdbcTemplate.queryForObject(sql, namedParameters, Long.class);
@@ -75,10 +75,10 @@ public class SecurityDAOImpl implements SecurityDAO {
                     "where id = :id";
             params.addValue("id", security.getId());
         }
-        params.addValue("isin", security.getIsin());
-        params.addValue("ticker", security.getTicker());
-        params.addValue("caption", security.getCaption());
-        params.addValue("code_grn", security.getCodeGRN());
+        params.addValue(ISIN, security.getIsin());
+        params.addValue(TICKER, security.getTicker());
+        params.addValue(CAPTION, security.getCaption());
+        params.addValue(CODE_GRN, security.getCodeGRN());
         params.addValue("id_app_user", security.getAppUser().getId());
         params.addValue("type", security.getType().toString());
 
@@ -94,20 +94,20 @@ public class SecurityDAOImpl implements SecurityDAO {
             SecurityType securityType = SecurityType.valueOf(rs.getString("security_type_code"));
             Security security;
             if (securityType == SecurityType.STOCK) {
-                security = new SecurityStock.Builder(rs.getString("isin"))
-                        .id(rs.getLong("id"))
-                        .ticker(rs.getString("ticker"))
-                        .caption(rs.getString("caption"))
-                        .codeGRN(rs.getString("code_grn"))
-                        .appUser(appUserService.findById(rs.getLong("id")))
+                security = new SecurityStock.Builder(rs.getString(ISIN))
+                        .id(rs.getLong(ID))
+                        .ticker(rs.getString(TICKER))
+                        .caption(rs.getString(CAPTION))
+                        .codeGRN(rs.getString(CODE_GRN))
+                        .appUser(appUserService.findById(rs.getLong(ID)))
                         .build();
             } else if (securityType == SecurityType.BOND) {
-                security = new SecurityBond.Builder(rs.getString("isin"))
-                        .id(rs.getLong("id"))
-                        .ticker(rs.getString("ticker"))
-                        .caption(rs.getString("caption"))
-                        .codeGRN(rs.getString("code_grn"))
-                        .appUser(appUserService.findById(rs.getLong("id")))
+                security = new SecurityBond.Builder(rs.getString(ISIN))
+                        .id(rs.getLong(ID))
+                        .ticker(rs.getString(TICKER))
+                        .caption(rs.getString(CAPTION))
+                        .codeGRN(rs.getString(CODE_GRN))
+                        .appUser(appUserService.findById(rs.getLong(ID)))
                         .build();
             } else {
                 throw new AssertionError("Unknown security type");
