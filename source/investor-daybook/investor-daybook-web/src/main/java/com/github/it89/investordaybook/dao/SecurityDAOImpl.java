@@ -27,6 +27,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
     private static final String TICKER = "ticker";
     private static final String CAPTION = "caption";
     private static final String CODE_GRN = "code_grn";
+    private static final String ID_APP_USER = "id_app_user";
 
 
     @Autowired
@@ -79,7 +80,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
         params.addValue(TICKER, security.getTicker());
         params.addValue(CAPTION, security.getCaption());
         params.addValue(CODE_GRN, security.getCodeGRN());
-        params.addValue("id_app_user", security.getAppUser().getId());
+        params.addValue(ID_APP_USER, security.getAppUser().getId());
         params.addValue("type", security.getType().toString());
 
         jdbcTemplate.update(sql, params);
@@ -99,7 +100,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
                         .ticker(rs.getString(TICKER))
                         .caption(rs.getString(CAPTION))
                         .codeGRN(rs.getString(CODE_GRN))
-                        .appUser(appUserService.findById(rs.getLong(ID)))
+                        .appUser(appUserService.findById(rs.getLong(ID_APP_USER)))
                         .build();
             } else if (securityType == SecurityType.BOND) {
                 security = new SecurityBond.Builder(rs.getString(ISIN))
@@ -107,7 +108,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
                         .ticker(rs.getString(TICKER))
                         .caption(rs.getString(CAPTION))
                         .codeGRN(rs.getString(CODE_GRN))
-                        .appUser(appUserService.findById(rs.getLong(ID)))
+                        .appUser(appUserService.findById(rs.getLong(ID_APP_USER)))
                         .build();
             } else {
                 throw new AssertionError("Unknown security type");

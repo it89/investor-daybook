@@ -69,7 +69,7 @@ public class DealStock extends Deal {
             return this;
         }
 
-        DealStock build() {
+        public DealStock build() {
             DealStock deal = new DealStock();
             deal.setId(this.id);
             deal.setSecurity(this.security);
