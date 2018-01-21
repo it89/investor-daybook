@@ -4,9 +4,13 @@ import com.github.it89.investordaybook.model.daybook.*;
 import com.github.it89.investordaybook.service.AppUserService;
 import com.github.it89.investordaybook.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -14,13 +18,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+@Repository
+@Qualifier("dealStockDAO")
 public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStockDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
+    private DataSource mDataSource;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        mDataSource = dataSource;
     }
 
     @Override
@@ -37,13 +46,41 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
     }
 
     @Override
-    public Long findIdByIsin(String dealNumber, long idAppUser) {
-        return null;
+    public Long findIdByDealNumber(String dealNumber, long idAppUser) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(mDataSource)
+                .withSchemaName("deal_pkg")
+                .withFunctionName("find_deal_id_by_deal_number")
+                .withReturnValue();
+
+        SqlParameterSource args = new MapSqlParameterSource()
+                .addValue("p_deal_number", dealNumber)
+                .addValue("p_app_user_id", idAppUser);
+
+        Long id = jdbcCall.executeFunction(Long.class, args);
+        return id;
     }
 
     @Override
     public void save(DealStock deal) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(mDataSource)
+                .withSchemaName("deal_pkg")
+                .withFunctionName("save_deal_stock")
+                .withReturnValue();
 
+        SqlParameterSource args = new MapSqlParameterSource()
+                .addValue("p_id", deal.getId())
+                .addValue("p_security_id", deal.getSecurity().getId())
+                .addValue("p_deal_number", deal.getDealNumber())
+                .addValue("p_date_time", deal.getDateTime().toString())
+                .addValue("p_trade_operation_code", deal.getOperation().toString())
+                .addValue("p_amount", deal.getAmount())
+                .addValue("p_volume", deal.getVolume())
+                .addValue("p_commission", deal.getCommission())
+                .addValue("p_app_user_id", deal.getAppUser().getId())
+                .addValue("p_price", deal.getPrice());
+
+        Long id = jdbcCall.executeFunction(Long.class, args);
+        deal.setId(id);
     }
 
     private static final class DealStockRowMapper implements RowMapper<DealStock> {
