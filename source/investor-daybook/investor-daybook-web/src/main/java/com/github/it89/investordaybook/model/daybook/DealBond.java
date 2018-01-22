@@ -5,12 +5,13 @@ import com.github.it89.investordaybook.model.AppUser;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class DealStock extends Deal {
-    private BigDecimal price;
+public class DealBond extends Deal {
+    private BigDecimal pricePct;
+    private BigDecimal accumulatedCouponYield;
 
     public static class Builder {
         private Long id;
-        private SecurityStock security;
+        private SecurityBond security;
         private String dealNumber;
         private LocalDateTime dateTime;
         private TradeOperation operation;
@@ -18,59 +19,65 @@ public class DealStock extends Deal {
         private BigDecimal volume;
         private BigDecimal commission;
         private AppUser appUser;
-        private BigDecimal price;
+        private BigDecimal pricePct;
+        private BigDecimal accumulatedCouponYield;
 
         public Builder(String dealNumber) {
             this.dealNumber = dealNumber;
         }
 
-        public Builder id(Long id) {
+        public DealBond.Builder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public Builder security(SecurityStock security) {
+        public DealBond.Builder security(SecurityBond security) {
             this.security = security;
             return this;
         }
 
-        public Builder dateTime(LocalDateTime dateTime) {
+        public DealBond.Builder dateTime(LocalDateTime dateTime) {
             this.dateTime = dateTime;
             return this;
         }
 
-        public Builder operation(TradeOperation operation) {
+        public DealBond.Builder operation(TradeOperation operation) {
             this.operation = operation;
             return this;
         }
 
-        public Builder amount(long amount) {
+        public DealBond.Builder amount(long amount) {
             this.amount = amount;
             return this;
         }
 
-        public Builder volume(BigDecimal volume) {
+        public DealBond.Builder volume(BigDecimal volume) {
             this.volume = volume;
             return this;
         }
 
-        public Builder commission(BigDecimal commission) {
+        public DealBond.Builder commission(BigDecimal commission) {
             this.commission = commission;
             return this;
         }
 
-        public Builder appUser(AppUser appUser) {
+        public DealBond.Builder appUser(AppUser appUser) {
             this.appUser = appUser;
             return this;
         }
 
-        public Builder price(BigDecimal price) {
-            this.price = price;
+        public DealBond.Builder pricePct(BigDecimal pricePct) {
+            this.pricePct = pricePct;
             return this;
         }
 
-        public DealStock build() {
-            DealStock deal = new DealStock();
+        public DealBond.Builder accumulatedCouponYield(BigDecimal accumulatedCouponYield) {
+            this.accumulatedCouponYield = accumulatedCouponYield;
+            return this;
+        }
+
+        public DealBond build() {
+            DealBond deal = new DealBond();
             deal.setId(this.id);
             deal.setSecurity(this.security);
             deal.setDealNumber(this.dealNumber);
@@ -80,26 +87,39 @@ public class DealStock extends Deal {
             deal.setVolume(this.volume);
             deal.setCommission(this.commission);
             deal.setAppUser(this.appUser);
-            deal.setPrice(this.price);
+            deal.setPricePct(this.pricePct);
+            deal.setAccumulatedCouponYield(this.accumulatedCouponYield);
             return deal;
         }
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getPricePct() {
+        return pricePct;
     }
 
-    public void setPrice(BigDecimal price) {
-        if (price == null) {
-            throw new IllegalArgumentException("price must be specified");
+    public void setPricePct(BigDecimal pricePct) {
+        if (pricePct == null) {
+            throw new IllegalArgumentException("pricePct must be specified");
         }
-        this.price = price;
+        this.pricePct = pricePct;
+    }
+
+    public BigDecimal getAccumulatedCouponYield() {
+        return accumulatedCouponYield;
+    }
+
+    public void setAccumulatedCouponYield(BigDecimal accumulatedCouponYield) {
+        if (accumulatedCouponYield == null) {
+            throw new IllegalArgumentException("accumulatedCouponYield must be specified");
+        }
+        this.accumulatedCouponYield = accumulatedCouponYield;
     }
 
     @Override
     public String toString() {
-        return "DealStock{" +
-                "price=" + price +
+        return "DealBond{" +
+                "pricePct=" + pricePct +
+                ", accumulatedCouponYield=" + accumulatedCouponYield +
                 ", id=" + id +
                 ", security=" + security +
                 ", dealNumber='" + dealNumber + '\'' +
