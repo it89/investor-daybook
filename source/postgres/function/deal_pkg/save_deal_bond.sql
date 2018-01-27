@@ -21,7 +21,6 @@ CREATE OR REPLACE FUNCTION deal_pkg.save_deal_bond(
     VOLATILE 
     ROWS 0
 AS $BODY$
-
 DECLARE
   v_deal_id bigint;
   count bigint;
@@ -43,10 +42,12 @@ BEGIN
       accumulated_coupon_yield = p_accumulated_coupon_yield
     WHERE deal_id = v_deal_id;
   END IF;
+  
+  DELETE FROM public.deal_stock ds
+   WHERE ds.deal_id = v_deal_id;
 
   RETURN v_deal_id;
 END;
-
 
 $BODY$;
 

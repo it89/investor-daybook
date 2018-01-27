@@ -1,6 +1,8 @@
 package com.github.it89.investordaybook.dao;
 
-import com.github.it89.investordaybook.model.daybook.*;
+import com.github.it89.investordaybook.model.daybook.DealBond;
+import com.github.it89.investordaybook.model.daybook.SecurityBond;
+import com.github.it89.investordaybook.model.daybook.TradeOperation;
 import com.github.it89.investordaybook.service.AppUserService;
 import com.github.it89.investordaybook.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Repository
-@Qualifier("dealStockDAO")
-public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStockDAO {
+@Qualifier("dealBondDAO")
+public class DealBondDAOImpl extends AbstractDAO<DealBond> implements DealBondDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DataSource mDataSource;
 
@@ -33,14 +34,14 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
     }
 
     @Override
-    public DealStock findById(long id) {
+    public DealBond findById(long id) {
         String sql = "SELECT ds.*, o.code as operation_code " +
-                "       FROM deal_stock_v ds, trade_operation o " +
+                "       FROM deal_bond_v ds, trade_operation o " +
                 "      WHERE ds.id_trade_operation = o.id AND s.id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ID", id);
-        List<DealStock> queryList = jdbcTemplate.query(sql, params, new DealStockRowMapper());
+        List<DealBond> queryList = jdbcTemplate.query(sql, params, new DealBondRowMapper());
 
         return getOneRecord(queryList);
     }
@@ -61,10 +62,10 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
     }
 
     @Override
-    public void save(DealStock deal) {
+    public void save(DealBond deal) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(mDataSource)
                 .withSchemaName("deal_pkg")
-                .withFunctionName("save_deal_stock")
+                .withFunctionName("save_deal_bond")
                 .withReturnValue();
 
         SqlParameterSource args = new MapSqlParameterSource()
@@ -77,31 +78,33 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
                 .addValue("p_volume", deal.getVolume())
                 .addValue("p_commission", deal.getCommission())
                 .addValue("p_app_user_id", deal.getAppUser().getId())
-                .addValue("p_price", deal.getPrice());
+                .addValue("p_price_pct", deal.getPricePct())
+                .addValue("p_accumulated_coupon_yield", deal.getAccumulatedCouponYield());
 
         Long id = jdbcCall.executeFunction(Long.class, args);
         deal.setId(id);
     }
 
-    private static final class DealStockRowMapper implements RowMapper<DealStock> {
+    private static final class DealBondRowMapper implements RowMapper<DealBond> {
         @Autowired
         private AppUserService appUserService;
         @Autowired
         private SecurityService securityService;
 
         @Override
-        public DealStock mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public DealBond mapRow(ResultSet rs, int rowNum) throws SQLException {
             TradeOperation operation = TradeOperation.valueOf(rs.getString("operation_code"));
-            return new DealStock.Builder(rs.getString("deal_number"))
+            return new DealBond.Builder(rs.getString("deal_number"))
                     .id(rs.getLong("id"))
-                    .security((SecurityStock)securityService.findById(rs.getLong("id_security")))
+                    .security((SecurityBond)securityService.findById(rs.getLong("id_security")))
                     .dateTime(LocalDateTime.parse(rs.getString("date_time")))
                     .operation(operation)
                     .amount(rs.getLong("amount"))
                     .volume(new BigDecimal(rs.getString("volume")))
                     .commission(new BigDecimal(rs.getString("commission")))
                     .appUser(appUserService.findById(rs.getLong("id_app_user")))
-                    .price(new BigDecimal(rs.getString("price")))
+                    .pricePct(new BigDecimal(rs.getString("price_pct")))
+                    .accumulatedCouponYield(new BigDecimal(rs.getString("accumulated_coupon_yield")))
                     .build();
         }
 

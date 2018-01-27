@@ -41,6 +41,9 @@ BEGIN
      WHERE deal_id = v_deal_id;
   END IF;
   
+  DELETE FROM public.deal_bond ds
+   WHERE ds.deal_id = v_deal_id;
+  
   RETURN v_deal_id;
 END;
 
