@@ -19,7 +19,6 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public AppUser findByLogin(String login) {
-        AppUser appUser = dao.findByLogin(login);
-        return appUser;
+        return dao.findByLogin(login);
     }
 }

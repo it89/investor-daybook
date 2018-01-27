@@ -15,7 +15,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 @Configuration
 @EnableWebMvc

@@ -27,6 +27,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
     private static final String TICKER = "ticker";
     private static final String CAPTION = "caption";
     private static final String CODE_GRN = "code_grn";
+    private static final String APP_USER_ID = "app_user_id";
 
 
     @Autowired
@@ -38,7 +39,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
     public Security findById(long id) {
         String sql = "SELECT s.*, st.code as security_type_code " +
                 "       FROM security s, security_type st " +
-                "      WHERE s.id_security_type = st.id AND s.id = :id";
+                "      WHERE s.security_type_id = st.id AND s.id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue(ID, id);
@@ -49,7 +50,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
 
     @Override
     public Long findIdByIsin(String isin, long idAppUser) {
-        String sql = "SELECT max(id) FROM security WHERE UPPER(isin) = UPPER(:isin) and id_app_user = :idAppUser";
+        String sql = "SELECT max(id) FROM security WHERE UPPER(isin) = UPPER(:isin) and app_user_id = :idAppUser";
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue(ISIN, isin);
@@ -64,14 +65,14 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
         String sql;
         if (security.getId() == null) {
             sql = "INSERT INTO security " +
-                    "(isin, ticker, caption, code_grn, id_app_user, id_security_type) " +
+                    "(isin, ticker, caption, code_grn, app_user_id, security_type_id) " +
                     "SELECT :isin, :ticker, :caption, :code_grn, " +
-                    ":id_app_user, (SELECT st.id FROM security_type st WHERE UPPER (st.code) = UPPER(:type))" +
+                    ":app_user_id, (SELECT st.id FROM security_type st WHERE UPPER (st.code) = UPPER(:type))" +
                     "FROM current_timestamp";
         } else {
             sql = "UPDATE security SET isin = :isin, ticker = :ticker, caption = :caption, code_grn = :code_grn," +
-                    "id_app_user = :id_app_user, " +
-                    "id_security_type = (select st.id from security_type st where upper(st.code) = upper(:type))" +
+                    "app_user_id = :app_user_id, " +
+                    "security_type_id = (select st.id from security_type st where upper(st.code) = upper(:type))" +
                     "where id = :id";
             params.addValue("id", security.getId());
         }
@@ -79,7 +80,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
         params.addValue(TICKER, security.getTicker());
         params.addValue(CAPTION, security.getCaption());
         params.addValue(CODE_GRN, security.getCodeGRN());
-        params.addValue("id_app_user", security.getAppUser().getId());
+        params.addValue(APP_USER_ID, security.getAppUser().getId());
         params.addValue("type", security.getType().toString());
 
         jdbcTemplate.update(sql, params);
@@ -99,7 +100,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
                         .ticker(rs.getString(TICKER))
                         .caption(rs.getString(CAPTION))
                         .codeGRN(rs.getString(CODE_GRN))
-                        .appUser(appUserService.findById(rs.getLong(ID)))
+                        .appUser(appUserService.findById(rs.getLong(APP_USER_ID)))
                         .build();
             } else if (securityType == SecurityType.BOND) {
                 security = new SecurityBond.Builder(rs.getString(ISIN))
@@ -107,7 +108,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
                         .ticker(rs.getString(TICKER))
                         .caption(rs.getString(CAPTION))
                         .codeGRN(rs.getString(CODE_GRN))
-                        .appUser(appUserService.findById(rs.getLong(ID)))
+                        .appUser(appUserService.findById(rs.getLong(APP_USER_ID)))
                         .build();
             } else {
                 throw new AssertionError("Unknown security type");
