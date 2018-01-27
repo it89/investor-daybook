@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @Qualifier("dealStockDAO")
@@ -56,8 +55,7 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
                 .addValue("p_deal_number", dealNumber)
                 .addValue("p_app_user_id", idAppUser);
 
-        Long id = jdbcCall.executeFunction(Long.class, args);
-        return id;
+        return jdbcCall.executeFunction(Long.class, args);
     }
 
     @Override

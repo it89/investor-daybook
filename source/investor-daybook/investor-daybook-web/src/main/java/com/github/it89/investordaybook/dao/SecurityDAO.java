@@ -1,6 +1,5 @@
 package com.github.it89.investordaybook.dao;
 
-import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.Security;
 
 public interface SecurityDAO {
