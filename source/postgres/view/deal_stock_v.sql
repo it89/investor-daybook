@@ -19,4 +19,3 @@ CREATE OR REPLACE VIEW public.deal_stock_v AS
 
 ALTER TABLE public.deal_stock_v
     OWNER TO postgres;
-
