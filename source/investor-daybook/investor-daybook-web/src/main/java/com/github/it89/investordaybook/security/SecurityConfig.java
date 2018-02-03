@@ -25,7 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/uploadXML").access("hasRole('USER')")
                 .and().formLogin()
                 .and().exceptionHandling().accessDeniedPage("/accessDenied");
+        http.csrf().disable();
     }
 }

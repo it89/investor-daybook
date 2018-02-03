@@ -1,19 +1,23 @@
 package com.github.it89.investordaybook.controller;
 
-import com.github.it89.investordaybook.DoSomething;
+import com.github.it89.investordaybook.service.CreateStoredReportXML;
+import com.github.it89.investordaybook.service.DoSomething;
+import com.github.it89.investordaybook.model.daybook.StoredReportXML;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class MainController {
     @Autowired
     private DoSomething doSomething;
+    @Autowired
+    private CreateStoredReportXML createStoredReportXML;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {
@@ -31,6 +35,23 @@ public class MainController {
     public String doSomething() {
         // TODO: For test only!
         return doSomething.doIt();
+    }
+
+    @RequestMapping(value = "/uploadXML", method = RequestMethod.GET)
+    public String uploadXML() {
+        return "uploadXML";
+    }
+
+    @RequestMapping(value = "/uploadReportXML", method = RequestMethod.POST)
+    @ResponseBody
+    public String uploadFileHandler(@RequestParam("file") MultipartFile file) {
+        return createStoredReportXML.upload(file, getUserName());
+    }
+
+    @RequestMapping(value = "/doPost", method = RequestMethod.POST)
+    @ResponseBody
+    public String doPost() {
+        return "post!";
     }
 
     private String getUserName() {

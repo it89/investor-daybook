@@ -5,5 +5,7 @@
 </head>
 <body>
     Hello world!
+    <a href="/login">login</a>
+    <a href="/uploadXML">Upload XML report</a>
 </body>
 </html>
