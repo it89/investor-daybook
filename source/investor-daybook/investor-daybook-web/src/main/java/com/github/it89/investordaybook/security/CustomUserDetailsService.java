@@ -1,7 +1,7 @@
 package com.github.it89.investordaybook.security;
 
 import com.github.it89.investordaybook.model.AppUser;
-import com.github.it89.investordaybook.service.AppUserService;
+import com.github.it89.investordaybook.service.dao.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

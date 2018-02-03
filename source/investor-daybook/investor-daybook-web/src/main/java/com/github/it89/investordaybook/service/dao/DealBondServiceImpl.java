@@ -1,4 +1,4 @@
-package com.github.it89.investordaybook.service;
+package com.github.it89.investordaybook.service.dao;
 
 import com.github.it89.investordaybook.dao.DealBondDAO;
 import com.github.it89.investordaybook.model.daybook.DealBond;

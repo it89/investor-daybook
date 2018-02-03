@@ -4,7 +4,7 @@
     <title>Upload XML report</title>
 </head>
 <body>
-<form method="POST" action="uploadReportXML">
+<form method="POST" action="uploadReportXML" enctype="multipart/form-data">
     File to upload: <input type="file" name="file"><br/>
     <input type="submit" value="Upload"> Press here to upload the file!
 </form>

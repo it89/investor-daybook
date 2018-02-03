@@ -1,11 +1,11 @@
-package com.github.it89.investordaybook;
+package com.github.it89.investordaybook.service;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.*;
-import com.github.it89.investordaybook.service.AppUserService;
-import com.github.it89.investordaybook.service.DealBondService;
-import com.github.it89.investordaybook.service.DealStockService;
-import com.github.it89.investordaybook.service.SecurityService;
+import com.github.it89.investordaybook.service.dao.AppUserService;
+import com.github.it89.investordaybook.service.dao.DealBondService;
+import com.github.it89.investordaybook.service.dao.DealStockService;
+import com.github.it89.investordaybook.service.dao.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

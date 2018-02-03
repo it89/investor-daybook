@@ -1,8 +1,8 @@
 package com.github.it89.investordaybook.dao;
 
 import com.github.it89.investordaybook.model.daybook.*;
-import com.github.it89.investordaybook.service.AppUserService;
-import com.github.it89.investordaybook.service.SecurityService;
+import com.github.it89.investordaybook.service.dao.AppUserService;
+import com.github.it89.investordaybook.service.dao.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
