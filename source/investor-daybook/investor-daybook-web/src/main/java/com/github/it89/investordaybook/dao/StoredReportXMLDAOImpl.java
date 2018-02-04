@@ -20,6 +20,9 @@ import java.util.List;
 @Repository
 @Qualifier("storedReportXMLDAO")
 public class StoredReportXMLDAOImpl extends AbstractDAO<StoredReportXML> implements StoredReportXMLDAO {
+    @Autowired
+    private AppUserService appUserService;
+
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DataSource mDataSource;
 
@@ -38,7 +41,7 @@ public class StoredReportXMLDAOImpl extends AbstractDAO<StoredReportXML> impleme
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ID", id);
-        List<StoredReportXML> queryList = jdbcTemplate.query(sql, params, new StoredReportXMLMapper());
+        List<StoredReportXML> queryList = jdbcTemplate.query(sql, params, new StoredReportXMLMapper(appUserService));
 
         return getOneRecord(queryList);
     }
@@ -47,10 +50,10 @@ public class StoredReportXMLDAOImpl extends AbstractDAO<StoredReportXML> impleme
     public List<StoredReportXML> getList(AppUser appUser) {
         String sql = "SELECT * " +
                 "       FROM stored_report_xml " +
-                "      WHERE app_user_id = :appUser";
+                "      WHERE app_user_id = :app_user_id";
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("appUser", appUser.getId());
-        return jdbcTemplate.query(sql, params, new StoredReportXMLMapper());
+        params.addValue("app_user_id", appUser.getId());
+        return jdbcTemplate.query(sql, params, new StoredReportXMLMapper(appUserService));
     }
 
     @Override
@@ -71,11 +74,17 @@ public class StoredReportXMLDAOImpl extends AbstractDAO<StoredReportXML> impleme
     }
 
     private static final class StoredReportXMLMapper implements RowMapper<StoredReportXML> {
+        private final AppUserService appUserService;
+
         @Autowired
-        private AppUserService appUserService;
+        public StoredReportXMLMapper(AppUserService appUserService) {
+            this.appUserService = appUserService;
+        }
 
         public StoredReportXML mapRow(ResultSet rs, int rowNum) throws SQLException {
-            StoredReportXML storedReport = new StoredReportXML(appUserService.findById(rs.getLong("id_app_user")));
+            Long AppUserID = rs.getLong("app_user_id");
+            AppUser appUser = appUserService.findById(AppUserID);
+            StoredReportXML storedReport = new StoredReportXML(appUser);
             storedReport.setFilename(rs.getString("filename"));
             storedReport.setText(rs.getString("text"));
             return storedReport;
