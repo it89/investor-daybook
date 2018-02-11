@@ -8,6 +8,8 @@ CREATE TABLE public.stored_report_xml
     app_user_id bigint NOT NULL,
     filename character varying(500) COLLATE pg_catalog."default" NOT NULL,
     text text COLLATE pg_catalog."default" NOT NULL,
+    date_from character varying(100) COLLATE pg_catalog."default",
+    date_to character varying(100) COLLATE pg_catalog."default",
     CONSTRAINT stored_report_xml_pkey PRIMARY KEY (id),
     CONSTRAINT stored_report_xml_app_user_id_fkey FOREIGN KEY (app_user_id)
         REFERENCES public.app_user (id) MATCH SIMPLE

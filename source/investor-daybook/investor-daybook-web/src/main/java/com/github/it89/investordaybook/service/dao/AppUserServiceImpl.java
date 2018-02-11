@@ -14,7 +14,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public AppUser findById(long id) {
-        return null;
+        return dao.findById(id);
     }
 
     @Override

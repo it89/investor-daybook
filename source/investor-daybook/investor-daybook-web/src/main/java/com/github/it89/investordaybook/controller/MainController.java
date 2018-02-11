@@ -1,11 +1,12 @@
 package com.github.it89.investordaybook.controller;
 
+import com.github.it89.investordaybook.model.daybook.StoredReportXML;
+import com.github.it89.investordaybook.model.imp.xml.ImportXML;
+import com.github.it89.investordaybook.model.imp.xml.ImportXMLOpenBroker;
 import com.github.it89.investordaybook.service.CreateStoredReportXML;
 import com.github.it89.investordaybook.service.DoSomething;
-import com.github.it89.investordaybook.model.daybook.StoredReportXML;
 import com.github.it89.investordaybook.service.dao.AppUserService;
 import com.github.it89.investordaybook.service.dao.StoredReportXMLService;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,8 @@ public class MainController {
     private StoredReportXMLService storedReportXMLService;
     @Autowired
     AppUserService appUserService;
+    @Autowired
+    ImportXML importXML;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {
@@ -66,6 +69,15 @@ public class MainController {
         List<StoredReportXML> reports = storedReportXMLService.getList(appUserService.findByLogin(getUserName()));
         model.addAttribute("reports", reports);
         return "importReportsList";
+    }
+
+    @RequestMapping(value = { "/import-report-{repId}" }, method = RequestMethod.GET)
+    public String importReport(@PathVariable String repId) {
+        StoredReportXML storedReportXML = storedReportXMLService.findById(Long.parseLong(repId));
+        if (storedReportXML.getAppUser().getLogin().equalsIgnoreCase(getUserName())) {
+            importXML.importXML(storedReportXML);
+        }
+        return "redirect:/import";
     }
 
     /////////------TEST-------------////////////////////////////////////////

@@ -13,15 +13,19 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>number</th>
                 <th>filename</th>
+                <th>date from</th>
+                <th>date to</th>
+                <th width="100"></th>
             </tr>
             </thead>
             <tbody>
             <c:forEach items="${reports}" var="report">
                 <tr>
-                    <td>1</td>
                     <td>${report.filename}</td>
+                    <td>${report.dateFrom}</td>
+                    <td>${report.dateTo}</td>
+                    <td><a href="<c:url value='/import-report-${report.id}' />" >import</a></td>
                 </tr>
             </c:forEach>
             </tbody>
