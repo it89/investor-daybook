@@ -10,8 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("securityService")
 @Transactional
 public class SecurityServiceImpl implements SecurityService {
+    private final SecurityDAO dao;
+
     @Autowired
-    private SecurityDAO dao;
+    public SecurityServiceImpl(SecurityDAO dao) {
+        this.dao = dao;
+    }
 
     @Override
     public Security findById(long id) {
@@ -35,4 +39,16 @@ public class SecurityServiceImpl implements SecurityService {
             security.setId(id);
         }
     }
+
+    @Override
+    public Security findByCodeGRN(String codeGRN, AppUser appUser) {
+        return dao.findByCodeGRN(codeGRN, appUser);
+    }
+
+    @Override
+    public Security findByCaption(String caption, AppUser appUser) {
+        return dao.findByCaption(caption, appUser);
+    }
+
+
 }

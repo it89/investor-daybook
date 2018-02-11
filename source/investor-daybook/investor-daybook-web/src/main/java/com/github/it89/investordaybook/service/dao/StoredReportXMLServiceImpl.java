@@ -23,7 +23,7 @@ public class StoredReportXMLServiceImpl implements StoredReportXMLService {
 
     @Override
     public List<StoredReportXML> getList(AppUser appUser) {
-        return null;
+        return dao.getList(appUser);
     }
 
     @Override

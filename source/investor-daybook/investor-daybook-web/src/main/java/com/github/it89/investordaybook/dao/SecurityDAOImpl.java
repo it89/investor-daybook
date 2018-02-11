@@ -1,5 +1,6 @@
 package com.github.it89.investordaybook.dao;
 
+import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.SecurityBond;
 import com.github.it89.investordaybook.model.daybook.SecurityStock;
@@ -21,6 +22,7 @@ import java.util.List;
 @Qualifier("securityDAO")
 public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
+    private final AppUserService appUserService;
 
     private static final String ID = "id";
     private static final String ISIN = "isin";
@@ -29,6 +31,10 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
     private static final String CODE_GRN = "code_grn";
     private static final String APP_USER_ID = "app_user_id";
 
+    @Autowired
+    public SecurityDAOImpl(AppUserService appUserService) {
+        this.appUserService = appUserService;
+    }
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -43,7 +49,7 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue(ID, id);
-        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper());
+        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
 
         return getOneRecord(queryList);
     }
@@ -86,9 +92,45 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
         jdbcTemplate.update(sql, params);
     }
 
+    @Override
+    public Security findByCodeGRN(String codeGRN, AppUser appUser) {
+        String sql = "SELECT s.*, st.code as security_type_code " +
+                "       FROM security s, security_type st " +
+                "      WHERE s.security_type_id = st.id " +
+                "        AND s.code_grn = :code_grn" +
+                "        AND s.app_user_id = :app_user_id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue(CODE_GRN, codeGRN);
+        params.addValue(APP_USER_ID, appUser.getId());
+        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+
+        return getOneRecord(queryList);
+    }
+
+    @Override
+    public Security findByCaption(String caption, AppUser appUser) {
+        String sql = "SELECT s.*, st.code as security_type_code " +
+                "       FROM security s, security_type st " +
+                "      WHERE s.security_type_id = st.id " +
+                "        AND upper(s.caption) = upper(:caption)" +
+                "        AND s.app_user_id = :app_user_id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue(CAPTION, caption);
+        params.addValue(APP_USER_ID, appUser.getId());
+        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+
+        return getOneRecord(queryList);
+    }
+
     private static final class SecurityRowMapper implements RowMapper<Security> {
+        private final AppUserService appUserService;
+
         @Autowired
-        private AppUserService appUserService;
+        public SecurityRowMapper(AppUserService appUserService) {
+            this.appUserService = appUserService;
+        }
 
         @Override
         public Security mapRow(ResultSet rs, int rowNum) throws SQLException {
