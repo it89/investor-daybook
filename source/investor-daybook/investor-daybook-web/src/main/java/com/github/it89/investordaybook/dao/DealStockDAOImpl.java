@@ -1,5 +1,6 @@
 package com.github.it89.investordaybook.dao;
 
+import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.*;
 import com.github.it89.investordaybook.service.dao.AppUserService;
 import com.github.it89.investordaybook.service.dao.SecurityService;
@@ -24,6 +25,13 @@ import java.util.List;
 public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStockDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DataSource mDataSource;
+    private final AppUserService appUserService;
+    private final SecurityService securityService;
+
+    public DealStockDAOImpl(AppUserService appUserService, SecurityService securityService) {
+        this.appUserService = appUserService;
+        this.securityService = securityService;
+    }
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -35,11 +43,12 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
     public DealStock findById(long id) {
         String sql = "SELECT ds.*, o.code as operation_code " +
                 "       FROM deal_stock_v ds, trade_operation o " +
-                "      WHERE ds.id_trade_operation = o.id AND s.id = :id";
+                "      WHERE ds.id_trade_operation = o.id " +
+                "        AND ds.id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("ID", id);
-        List<DealStock> queryList = jdbcTemplate.query(sql, params, new DealStockRowMapper());
+        List<DealStock> queryList = jdbcTemplate.query(sql, params, new DealStockRowMapper(appUserService, securityService));
 
         return getOneRecord(queryList);
     }
@@ -81,24 +90,40 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
         deal.setId(id);
     }
 
+    @Override
+    public List<DealStock> getList(AppUser appUser) {
+        String sql = "SELECT ds.*, o.code as operation_code " +
+                "       FROM deal_stock_v ds, trade_operation o " +
+                "      WHERE ds.trade_operation_id = o.id " +
+                "        AND ds.app_user_id = :app_user_id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("app_user_id", appUser.getId());
+        return jdbcTemplate.query(sql, params, new DealStockRowMapper(appUserService, securityService));
+    }
+
     private static final class DealStockRowMapper implements RowMapper<DealStock> {
+        private final AppUserService appUserService;
+        private final SecurityService securityService;
+
         @Autowired
-        private AppUserService appUserService;
-        @Autowired
-        private SecurityService securityService;
+        public DealStockRowMapper(AppUserService appUserService, SecurityService securityService) {
+            this.appUserService = appUserService;
+            this.securityService = securityService;
+        }
 
         @Override
         public DealStock mapRow(ResultSet rs, int rowNum) throws SQLException {
             TradeOperation operation = TradeOperation.valueOf(rs.getString("operation_code"));
             return new DealStock.Builder(rs.getString("deal_number"))
                     .id(rs.getLong("id"))
-                    .security((SecurityStock)securityService.findById(rs.getLong("id_security")))
+                    .security((SecurityStock)securityService.findById(rs.getLong("security_id")))
                     .dateTime(LocalDateTime.parse(rs.getString("date_time")))
                     .operation(operation)
                     .amount(rs.getLong("amount"))
                     .volume(new BigDecimal(rs.getString("volume")))
                     .commission(new BigDecimal(rs.getString("commission")))
-                    .appUser(appUserService.findById(rs.getLong("id_app_user")))
+                    .appUser(appUserService.findById(rs.getLong("app_user_id")))
                     .price(new BigDecimal(rs.getString("price")))
                     .build();
         }

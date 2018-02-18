@@ -1,12 +1,14 @@
 package com.github.it89.investordaybook.controller;
 
+import com.github.it89.investordaybook.model.daybook.DealBond;
+import com.github.it89.investordaybook.model.daybook.DealStock;
+import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.StoredReportXML;
 import com.github.it89.investordaybook.model.imp.xml.ImportXML;
 import com.github.it89.investordaybook.model.imp.xml.ImportXMLOpenBroker;
 import com.github.it89.investordaybook.service.CreateStoredReportXML;
 import com.github.it89.investordaybook.service.DoSomething;
-import com.github.it89.investordaybook.service.dao.AppUserService;
-import com.github.it89.investordaybook.service.dao.StoredReportXMLService;
+import com.github.it89.investordaybook.service.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +31,12 @@ public class MainController {
     AppUserService appUserService;
     @Autowired
     ImportXML importXML;
+    @Autowired
+    SecurityService securityService;
+    @Autowired
+    DealStockService dealStockService;
+    @Autowired
+    DealBondService dealBondService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {
@@ -78,6 +86,22 @@ public class MainController {
             importXML.importXML(storedReportXML);
         }
         return "redirect:/import";
+    }
+
+    @RequestMapping(value = {"/securities" }, method = RequestMethod.GET)
+    public String securities(ModelMap model) {
+        List<Security> securities = securityService.getList(appUserService.findByLogin(getUserName()));
+        model.addAttribute("securities", securities);
+        return "securities";
+    }
+
+    @RequestMapping(value = {"/deals" }, method = RequestMethod.GET)
+    public String deals(ModelMap model) {
+        List<DealStock> stockDeals = dealStockService.getList(appUserService.findByLogin(getUserName()));
+        List<DealBond> bondDeals = dealBondService.getList(appUserService.findByLogin(getUserName()));
+        model.addAttribute("stockDeals", stockDeals);
+        model.addAttribute("bondDeals", bondDeals);
+        return "deals";
     }
 
     /////////------TEST-------------////////////////////////////////////////

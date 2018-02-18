@@ -124,6 +124,19 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
         return getOneRecord(queryList);
     }
 
+    @Override
+    public List<Security> getList(AppUser appUser) {
+        String sql = "SELECT s.*, st.code as security_type_code " +
+                "       FROM security s, security_type st " +
+                "      WHERE s.security_type_id = st.id " +
+                "        AND s.app_user_id = :app_user_id" +
+                "      ORDER BY st.code, s.caption";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue(APP_USER_ID, appUser.getId());
+        return jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+    }
+
     private static final class SecurityRowMapper implements RowMapper<Security> {
         private final AppUserService appUserService;
 
