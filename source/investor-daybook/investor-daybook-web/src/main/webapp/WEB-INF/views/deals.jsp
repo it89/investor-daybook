@@ -16,6 +16,9 @@
                 <th>Ticker</th>
                 <th>Caption</th>
                 <th>Date</th>
+                <th>Operation</th>
+                <th>Price</th>
+                <th>Amount</th>
             </tr>
             </thead>
             <tbody>
@@ -24,6 +27,9 @@
                     <td>${stockDeal.security.ticker}</td>
                     <td>${stockDeal.security.caption}</td>
                     <td>${stockDeal.dateTime}</td>
+                    <td>${stockDeal.operation}</td>
+                    <td>${stockDeal.price}</td>
+                    <td>${stockDeal.amount}</td>
                 </tr>
             </c:forEach>
             </tbody>
@@ -35,6 +41,10 @@
                 <th>Ticker</th>
                 <th>Caption</th>
                 <th>Date</th>
+                <th>Operation</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>ACY</th>
             </tr>
             </thead>
             <tbody>
@@ -43,6 +53,10 @@
                     <td>${bondDeal.security.ticker}</td>
                     <td>${bondDeal.security.caption}</td>
                     <td>${bondDeal.dateTime}</td>
+                    <td>${bondDeal.operation}</td>
+                    <td>${bondDeal.pricePct}</td>
+                    <td>${bondDeal.amount}</td>
+                    <td>${bondDeal.accumulatedCouponYield}</td>
                 </tr>
             </c:forEach>
             </tbody>
