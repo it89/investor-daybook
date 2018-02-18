@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service("securityService")
 @Transactional
 public class SecurityServiceImpl implements SecurityService {
@@ -48,6 +50,14 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public Security findByCaption(String caption, AppUser appUser) {
         return dao.findByCaption(caption, appUser);
+    }
+
+    @Override
+    public List<Security> getList(AppUser appUser) {
+        if (appUser == null) {
+            throw new IllegalArgumentException("AppUser is null");
+        }
+        return dao.getList(appUser);
     }
 
 

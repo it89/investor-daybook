@@ -27,6 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/uploadXML").access("hasRole('USER')")
                 .antMatchers("/import").access("hasRole('USER')")
+                .antMatchers("/securities").access("hasRole('USER')")
+                .antMatchers("/deals").access("hasRole('USER')")
                 .and().formLogin()
                 .and().exceptionHandling().accessDeniedPage("/accessDenied");
         http.csrf().disable();
