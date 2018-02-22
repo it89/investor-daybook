@@ -1,9 +1,9 @@
 package com.github.it89.investordaybook.dao;
 
 import com.github.it89.investordaybook.model.AppUser;
-import com.github.it89.investordaybook.model.daybook.*;
-import com.github.it89.investordaybook.service.dao.AppUserService;
-import com.github.it89.investordaybook.service.dao.SecurityService;
+import com.github.it89.investordaybook.model.daybook.DealStock;
+import com.github.it89.investordaybook.model.daybook.SecurityStock;
+import com.github.it89.investordaybook.model.daybook.TradeOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,13 +25,6 @@ import java.util.List;
 public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStockDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DataSource mDataSource;
-    private final AppUserService appUserService;
-    private final SecurityService securityService;
-
-    public DealStockDAOImpl(AppUserService appUserService, SecurityService securityService) {
-        this.appUserService = appUserService;
-        this.securityService = securityService;
-    }
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -41,14 +34,13 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
 
     @Override
     public DealStock findById(long id) {
-        String sql = "SELECT ds.*, o.code as operation_code " +
-                "       FROM deal_stock_v ds, trade_operation o " +
-                "      WHERE ds.id_trade_operation = o.id " +
-                "        AND ds.id = :id";
+        String sql = "SELECT ds.* " +
+                "  FROM deal_stock_obj_v ds " +
+                " WHERE ds.deal_stock_id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("ID", id);
-        List<DealStock> queryList = jdbcTemplate.query(sql, params, new DealStockRowMapper(appUserService, securityService));
+        params.addValue("id", id);
+        List<DealStock> queryList = jdbcTemplate.query(sql, params, new DealStockDAOImpl.DealStockRowMapper());
 
         return getOneRecord(queryList);
     }
@@ -92,41 +84,32 @@ public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStoc
 
     @Override
     public List<DealStock> getList(AppUser appUser) {
-        String sql = "SELECT ds.*, o.code as operation_code " +
-                "       FROM deal_stock_v ds, trade_operation o " +
-                "      WHERE ds.trade_operation_id = o.id " +
-                "        AND ds.app_user_id = :app_user_id";
+        String sql = "SELECT ds.* " +
+                "  FROM deal_stock_obj_v ds " +
+                " WHERE ds.app_user_id = :app_user_id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("app_user_id", appUser.getId());
-        return jdbcTemplate.query(sql, params, new DealStockRowMapper(appUserService, securityService));
+        return jdbcTemplate.query(sql, params, new DealStockRowMapper());
     }
 
     private static final class DealStockRowMapper implements RowMapper<DealStock> {
-        private final AppUserService appUserService;
-        private final SecurityService securityService;
-
-        @Autowired
-        public DealStockRowMapper(AppUserService appUserService, SecurityService securityService) {
-            this.appUserService = appUserService;
-            this.securityService = securityService;
-        }
 
         @Override
-        public DealStock mapRow(ResultSet rs, int rowNum) throws SQLException {
-            TradeOperation operation = TradeOperation.valueOf(rs.getString("operation_code"));
+        public DealStock mapRow(ResultSet rs, int i) throws SQLException {
+            SecurityStock security = (SecurityStock)SecurityDAOImpl.mapRow(rs);
+
             return new DealStock.Builder(rs.getString("deal_number"))
-                    .id(rs.getLong("id"))
-                    .security((SecurityStock)securityService.findById(rs.getLong("security_id")))
+                    .id(rs.getLong("deal_id"))
+                    .security(security)
                     .dateTime(LocalDateTime.parse(rs.getString("date_time")))
-                    .operation(operation)
+                    .operation(TradeOperation.valueOf(rs.getString("operation_code")))
                     .amount(rs.getLong("amount"))
                     .volume(new BigDecimal(rs.getString("volume")))
                     .commission(new BigDecimal(rs.getString("commission")))
-                    .appUser(appUserService.findById(rs.getLong("app_user_id")))
+                    .appUser(security.getAppUser())
                     .price(new BigDecimal(rs.getString("price")))
                     .build();
         }
-
     }
 }

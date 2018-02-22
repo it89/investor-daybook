@@ -1,0 +1,31 @@
+-- View: public.deal_stock_obj_v
+
+-- DROP VIEW public.deal_stock_obj_v;
+
+CREATE OR REPLACE VIEW public.deal_stock_obj_v AS
+ SELECT ds.id AS deal_id,
+    ds.deal_number,
+    ds.date_time,
+    ds.trade_operation_id,
+    ds.amount,
+    ds.volume,
+    ds.commission,
+    ds.price,
+    o.code AS operation_code,
+    s.security_id,
+    s.isin,
+    s.ticker,
+    s.caption,
+    s.code_grn,
+    s.security_type_code,
+    s.app_user_id,
+    s.login,
+    s.password
+   FROM deal_stock_v ds,
+    trade_operation o,
+    security_obj_v s
+  WHERE ds.trade_operation_id = o.id AND ds.security_id = s.security_id;
+
+ALTER TABLE public.deal_stock_obj_v
+    OWNER TO postgres;
+

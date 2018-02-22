@@ -25,7 +25,7 @@ public class AppUserDAOImpl extends AbstractDAO<AppUser> implements AppUserDAO {
 
     @Override
     public AppUser findById(long id) {
-        String sql = "select * from app_user where id = :id";
+        String sql = "select * from app_user_obj_v where app_user_id = :id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
@@ -37,7 +37,7 @@ public class AppUserDAOImpl extends AbstractDAO<AppUser> implements AppUserDAO {
 
     @Override
     public AppUser findByLogin(String login) {
-        String sql = "select * from app_user where upper(login) = upper(:login)";
+        String sql = "select * from app_user_obj_v where upper(login) = upper(:login)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("login", login);
@@ -59,11 +59,19 @@ public class AppUserDAOImpl extends AbstractDAO<AppUser> implements AppUserDAO {
         // TODO: implement
     }
 
+    static AppUser mapRow(ResultSet rs) throws SQLException {
+        AppUser appUser = new AppUser();
+        appUser.setId(rs.getLong("app_user_id"));
+        appUser.setLogin(rs.getString("login"));
+        appUser.setPassword(rs.getString("password"));
+        return appUser;
+    }
+
     private static final class AppUserRowMapper implements RowMapper<AppUser> {
 
         @Override
         public AppUser mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new AppUser(rs.getLong("id"), rs.getString("login"), rs.getString("password"));
+            return AppUserDAOImpl.mapRow(rs);
         }
 
     }
