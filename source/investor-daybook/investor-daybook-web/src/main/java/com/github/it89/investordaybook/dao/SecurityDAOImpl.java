@@ -5,7 +5,6 @@ import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.SecurityBond;
 import com.github.it89.investordaybook.model.daybook.SecurityStock;
 import com.github.it89.investordaybook.model.daybook.SecurityType;
-import com.github.it89.investordaybook.service.dao.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,19 +21,13 @@ import java.util.List;
 @Qualifier("securityDAO")
 public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
-    private final AppUserService appUserService;
 
-    private static final String ID = "id";
+    private static final String SECURITY_ID = "security_id";
     private static final String ISIN = "isin";
     private static final String TICKER = "ticker";
     private static final String CAPTION = "caption";
     private static final String CODE_GRN = "code_grn";
     private static final String APP_USER_ID = "app_user_id";
-
-    @Autowired
-    public SecurityDAOImpl(AppUserService appUserService) {
-        this.appUserService = appUserService;
-    }
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
@@ -43,13 +36,13 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
 
     @Override
     public Security findById(long id) {
-        String sql = "SELECT s.*, st.code as security_type_code " +
-                "       FROM security s, security_type st " +
-                "      WHERE s.security_type_id = st.id AND s.id = :id";
+        String sql = "SELECT s.* " +
+                "       FROM security_obj_v s " +
+                "      WHERE s.security_id = :security_id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue(ID, id);
-        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+        params.addValue(SECURITY_ID, id);
+        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper());
 
         return getOneRecord(queryList);
     }
@@ -94,81 +87,75 @@ public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDA
 
     @Override
     public Security findByCodeGRN(String codeGRN, AppUser appUser) {
-        String sql = "SELECT s.*, st.code as security_type_code " +
-                "       FROM security s, security_type st " +
-                "      WHERE s.security_type_id = st.id " +
-                "        AND s.code_grn = :code_grn" +
+        String sql = "SELECT s.* " +
+                "       FROM security_obj_v s " +
+                "      WHERE s.code_grn = :code_grn" +
                 "        AND s.app_user_id = :app_user_id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue(CODE_GRN, codeGRN);
         params.addValue(APP_USER_ID, appUser.getId());
-        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityRowMapper());
 
         return getOneRecord(queryList);
     }
 
     @Override
     public Security findByCaption(String caption, AppUser appUser) {
-        String sql = "SELECT s.*, st.code as security_type_code " +
-                "       FROM security s, security_type st " +
-                "      WHERE s.security_type_id = st.id " +
-                "        AND upper(s.caption) = upper(:caption)" +
-                "        AND s.app_user_id = :app_user_id";
+        String sql = "SELECT s.* " +
+                "  FROM security_obj_v s " +
+                " WHERE upper(s.caption) = upper(:caption) " +
+                "   AND s.app_user_id = :app_user_id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue(CAPTION, caption);
         params.addValue(APP_USER_ID, appUser.getId());
-        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+        List<Security> queryList = jdbcTemplate.query(sql, params, new SecurityRowMapper());
 
         return getOneRecord(queryList);
     }
 
     @Override
     public List<Security> getList(AppUser appUser) {
-        String sql = "SELECT s.*, st.code as security_type_code " +
-                "       FROM security s, security_type st " +
-                "      WHERE s.security_type_id = st.id " +
-                "        AND s.app_user_id = :app_user_id" +
-                "      ORDER BY st.code, s.caption";
+        String sql = "SELECT s.* "  +
+                "  FROM security_obj_v s " +
+                " WHERE s.app_user_id = :app_user_id";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue(APP_USER_ID, appUser.getId());
-        return jdbcTemplate.query(sql, params, new SecurityDAOImpl.SecurityRowMapper(appUserService));
+        return jdbcTemplate.query(sql, params, new SecurityRowMapper());
+    }
+
+    static Security mapRow(ResultSet rs) throws SQLException {
+        AppUser appUser = AppUserDAOImpl.mapRow(rs);
+        SecurityType securityType = SecurityType.valueOf(rs.getString("security_type_code"));
+        Security security;
+        if (securityType == SecurityType.STOCK) {
+            security = new SecurityStock.Builder(rs.getString(ISIN))
+                    .id(rs.getLong(SECURITY_ID))
+                    .ticker(rs.getString(TICKER))
+                    .caption(rs.getString(CAPTION))
+                    .codeGRN(rs.getString(CODE_GRN))
+                    .appUser(appUser)
+                    .build();
+        } else if (securityType == SecurityType.BOND) {
+            security = new SecurityBond.Builder(rs.getString(ISIN))
+                    .id(rs.getLong(SECURITY_ID))
+                    .ticker(rs.getString(TICKER))
+                    .caption(rs.getString(CAPTION))
+                    .codeGRN(rs.getString(CODE_GRN))
+                    .appUser(appUser)
+                    .build();
+        } else {
+            throw new AssertionError("Unknown security type");
+        }
+        return security;
     }
 
     private static final class SecurityRowMapper implements RowMapper<Security> {
-        private final AppUserService appUserService;
-
-        @Autowired
-        public SecurityRowMapper(AppUserService appUserService) {
-            this.appUserService = appUserService;
-        }
-
         @Override
         public Security mapRow(ResultSet rs, int rowNum) throws SQLException {
-            SecurityType securityType = SecurityType.valueOf(rs.getString("security_type_code"));
-            Security security;
-            if (securityType == SecurityType.STOCK) {
-                security = new SecurityStock.Builder(rs.getString(ISIN))
-                        .id(rs.getLong(ID))
-                        .ticker(rs.getString(TICKER))
-                        .caption(rs.getString(CAPTION))
-                        .codeGRN(rs.getString(CODE_GRN))
-                        .appUser(appUserService.findById(rs.getLong(APP_USER_ID)))
-                        .build();
-            } else if (securityType == SecurityType.BOND) {
-                security = new SecurityBond.Builder(rs.getString(ISIN))
-                        .id(rs.getLong(ID))
-                        .ticker(rs.getString(TICKER))
-                        .caption(rs.getString(CAPTION))
-                        .codeGRN(rs.getString(CODE_GRN))
-                        .appUser(appUserService.findById(rs.getLong(APP_USER_ID)))
-                        .build();
-            } else {
-                throw new AssertionError("Unknown security type");
-            }
-            return security;
+            return SecurityDAOImpl.mapRow(rs);
         }
 
     }
