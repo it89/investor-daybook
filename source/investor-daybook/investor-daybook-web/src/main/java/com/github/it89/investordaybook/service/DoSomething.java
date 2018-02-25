@@ -26,6 +26,7 @@ public class DoSomething {
     public String doIt() {
         AppUser appUser = appUserService.findByLogin("log");
 
+
         return appUser.toString();
         /*SecurityStock securityStock = new SecurityStock.Builder("222").ticker("GZPR").caption("Газпром")
                 .codeGRN("333").appUser(appUser).build();

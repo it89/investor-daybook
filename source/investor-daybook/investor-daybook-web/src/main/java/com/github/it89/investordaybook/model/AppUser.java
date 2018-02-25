@@ -1,5 +1,18 @@
 package com.github.it89.investordaybook.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.*;
+
+
+@NamedQueries({
+        @NamedQuery(name="AppUser.findById",
+                query="select u from AppUser u where u.id = :id"),
+        @NamedQuery(name="AppUser.findByLogin",
+                query="select u from AppUser u where upper(u.login) = upper(:login)")
+})
+@Entity
+@Table(name = "app_user")
 public class AppUser {
     private long id;
     private String login;
@@ -13,6 +26,8 @@ public class AppUser {
         this.password = password;
     }
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -20,6 +35,8 @@ public class AppUser {
         this.id = id;
     }
 
+    @NotEmpty
+    @Column(name="login", nullable=false)
     public String getLogin() {
         return login;
     }
@@ -27,6 +44,8 @@ public class AppUser {
         this.login = login;
     }
 
+    @NotEmpty
+    @Column(name="password", nullable=false)
     public String getPassword() {
         return password;
     }
