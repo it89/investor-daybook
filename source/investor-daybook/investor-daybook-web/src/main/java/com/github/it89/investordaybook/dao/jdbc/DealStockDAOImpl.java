@@ -1,5 +1,6 @@
-package com.github.it89.investordaybook.dao;
+package com.github.it89.investordaybook.dao.jdbc;
 
+import com.github.it89.investordaybook.dao.DealStockDAO;
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.DealStock;
 import com.github.it89.investordaybook.model.daybook.SecurityStock;
@@ -20,8 +21,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
-@Qualifier("dealStockDAO")
+/*@Repository
+@Qualifier("dealStockDAO")*/
 public class DealStockDAOImpl extends AbstractDAO<DealStock> implements DealStockDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DataSource mDataSource;

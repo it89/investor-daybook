@@ -1,5 +1,6 @@
-package com.github.it89.investordaybook.dao;
+package com.github.it89.investordaybook.dao.jdbc;
 
+import com.github.it89.investordaybook.dao.SecurityDAO;
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.SecurityBond;
@@ -17,8 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Repository
-@Qualifier("securityDAO")
+/*@Repository
+@Qualifier("securityDAO")*/
 public class SecurityDAOImpl extends AbstractDAO<Security> implements SecurityDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
 

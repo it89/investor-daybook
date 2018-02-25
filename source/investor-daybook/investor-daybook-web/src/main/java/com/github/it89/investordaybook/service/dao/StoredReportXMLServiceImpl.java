@@ -13,7 +13,7 @@ import java.util.List;
 @Service("storedReportXMLService")
 @Transactional
 public class StoredReportXMLServiceImpl implements StoredReportXMLService {
-    @Autowired
+    /*@Autowired
     private StoredReportXMLDAO dao;
 
     @Override
@@ -29,5 +29,5 @@ public class StoredReportXMLServiceImpl implements StoredReportXMLService {
     @Override
     public void save(StoredReportXML storedReportXML) {
         dao.save(storedReportXML);
-    }
+    }*/
 }

@@ -28,7 +28,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private Environment env;
 
-    @Bean
+/*    @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getRequiredProperty("jdbc.driverClassName"));
@@ -36,14 +36,14 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         dataSource.setUsername(env.getRequiredProperty("jdbc.username"));
         dataSource.setPassword(env.getRequiredProperty("jdbc.password"));
         return dataSource;
-    }
+    }*/
 
-    @Bean
+/*    @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.setResultsMapCaseInsensitive(true);
         return jdbcTemplate;
-    }
+    }*/
 
     @Bean
     public MultipartResolver multipartResolver() {

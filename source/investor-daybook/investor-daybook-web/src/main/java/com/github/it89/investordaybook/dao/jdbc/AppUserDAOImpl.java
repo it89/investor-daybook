@@ -1,5 +1,6 @@
-package com.github.it89.investordaybook.dao;
+package com.github.it89.investordaybook.dao.jdbc;
 
+import com.github.it89.investordaybook.dao.AppUserDAO;
 import com.github.it89.investordaybook.model.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,8 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Repository
-@Qualifier("appUserDAO")
+/*@Repository
+@Qualifier("appUserDAO")*/
 public class AppUserDAOImpl extends AbstractDAO<AppUser> implements AppUserDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
 

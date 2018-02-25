@@ -16,17 +16,18 @@ import java.time.LocalDateTime;
 public class DoSomething {
     @Autowired
     private AppUserService appUserService;
-    @Autowired
+    /*@Autowired
     private SecurityService securityService;
     @Autowired
     private DealStockService dealStockService;
     @Autowired
-    private DealBondService dealBondService;
+    private DealBondService dealBondService;*/
 
     public String doIt() {
         AppUser appUser = appUserService.findByLogin("log");
 
-        SecurityStock securityStock = new SecurityStock.Builder("222").ticker("GZPR").caption("Газпром")
+        return appUser.toString();
+        /*SecurityStock securityStock = new SecurityStock.Builder("222").ticker("GZPR").caption("Газпром")
                 .codeGRN("333").appUser(appUser).build();
 
         securityService.save(securityStock);
@@ -63,7 +64,7 @@ public class DoSomething {
 
         dealBondService.save(dealBond);
 
-        return dealBond.toString();
+        return dealBond.toString();*/
         /*Long id = dealStockService.findIdByDealNumber("777", appUser.getId());
         if (id != null)
             return id.toString();

@@ -12,7 +12,7 @@ import java.util.List;
 @Service("dealBondService")
 @Transactional
 public class DealBondServiceImpl implements DealBondService {
-    @Autowired
+    /*@Autowired
     private DealBondDAO dao;
 
     @Override
@@ -33,5 +33,5 @@ public class DealBondServiceImpl implements DealBondService {
     @Override
     public List<DealBond> getList(AppUser appUser) {
         return dao.getList(appUser);
-    }
+    }*/
 }

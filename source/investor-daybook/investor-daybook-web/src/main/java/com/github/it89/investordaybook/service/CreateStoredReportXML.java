@@ -34,13 +34,14 @@ public class CreateStoredReportXML {
     }
 
     private void create(String filename, String text, String appUserName) {
-        AppUser appUser = appUserService.findByLogin(appUserName);
+        /*AppUser appUser = appUserService.findByLogin(appUserName);
         if (appUser == null) {
             throw new AssertionError("User " + appUserName + " not found");
         }
         StoredReportXML reportXML = new StoredReportXML(appUser);
         reportXML.setFilename(filename);
         reportXML.setText(text);
-        storedReportXMLService.save(reportXML);
+        storedReportXMLService.save(reportXML);*/
+        throw new AssertionError("Not implement");
     }
 }

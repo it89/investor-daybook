@@ -1,5 +1,6 @@
-package com.github.it89.investordaybook.dao;
+package com.github.it89.investordaybook.dao.jdbc;
 
+import com.github.it89.investordaybook.dao.StoredReportXMLDAO;
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.StoredReportXML;
 import com.github.it89.investordaybook.service.dao.AppUserService;
@@ -19,8 +20,8 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.util.List;
 
-@Repository
-@Qualifier("storedReportXMLDAO")
+/*@Repository
+@Qualifier("storedReportXMLDAO")*/
 public class StoredReportXMLDAOImpl extends AbstractDAO<StoredReportXML> implements StoredReportXMLDAO {
     @Autowired
     private AppUserService appUserService;

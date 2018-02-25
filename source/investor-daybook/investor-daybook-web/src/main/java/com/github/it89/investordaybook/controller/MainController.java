@@ -23,7 +23,7 @@ import java.util.List;
 public class MainController {
     @Autowired
     private DoSomething doSomething;
-    @Autowired
+    /*@Autowired
     private CreateStoredReportXML createStoredReportXML;
     @Autowired
     private StoredReportXMLService storedReportXMLService;
@@ -36,7 +36,7 @@ public class MainController {
     @Autowired
     DealStockService dealStockService;
     @Autowired
-    DealBondService dealBondService;
+    DealBondService dealBondService;*/
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {
@@ -49,9 +49,7 @@ public class MainController {
         return "accessDenied";
     }
 
-
-
-    @RequestMapping(value = "/uploadXML", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/uploadXML", method = RequestMethod.GET)
     public String uploadXML() {
         return "uploadXML";
     }
@@ -60,7 +58,7 @@ public class MainController {
     @ResponseBody
     public String uploadFileHandler(@RequestParam("file") MultipartFile file) {
         return createStoredReportXML.upload(file, getUserName());
-    }
+    }*/
 
     private String getUserName() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -72,7 +70,7 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value = {"/import" }, method = RequestMethod.GET)
+    /*@RequestMapping(value = {"/import" }, method = RequestMethod.GET)
     public String listStoredXML(ModelMap model) {
         List<StoredReportXML> reports = storedReportXMLService.getList(appUserService.findByLogin(getUserName()));
         model.addAttribute("reports", reports);
@@ -102,7 +100,7 @@ public class MainController {
         model.addAttribute("stockDeals", stockDeals);
         model.addAttribute("bondDeals", bondDeals);
         return "deals";
-    }
+    }*/
 
     /////////------TEST-------------////////////////////////////////////////
     // TODO: For test only!

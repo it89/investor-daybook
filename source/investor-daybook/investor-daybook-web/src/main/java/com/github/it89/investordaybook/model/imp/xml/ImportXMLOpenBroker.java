@@ -24,20 +24,20 @@ import javax.xml.xpath.*;
 
 @Service("importXMLOpenBroker")
 public class ImportXMLOpenBroker implements ImportXML {
-    @Autowired
+    /*@Autowired
     private SecurityService securityService;
     @Autowired
     private DealBondService dealBondService;
     @Autowired
     private DealStockService dealStockService;
     @Autowired
-    private StoredReportXMLService storedReportXMLService;
+    private StoredReportXMLService storedReportXMLService;*/
 
     private XPathFactory pathFactory = XPathFactory.newInstance();
 
     @Override
     public void importXML(StoredReportXML storedReportXML) {
-        DocumentBuilder documentBuilder;
+        /*DocumentBuilder documentBuilder;
         try {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = documentBuilder.parse(IOUtils.toInputStream(storedReportXML.getText()));
@@ -46,11 +46,12 @@ public class ImportXMLOpenBroker implements ImportXML {
             importInfo(document, storedReportXML);
         } catch (ParserConfigurationException | XPathExpressionException | SAXException | IOException ex) {
             ex.printStackTrace(System.out);
-        }
+        }*/
+        throw new AssertionError("Not implement");
     }
 
     private void importInfo(Document document, StoredReportXML storedReportXML) throws XPathExpressionException {
-        XPath xpath = pathFactory.newXPath();
+        /*XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//broker_report");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
         if (nodes.getLength() > 0) {
@@ -61,12 +62,14 @@ public class ImportXMLOpenBroker implements ImportXML {
             storedReportXML.setDateFrom(dateFrom);
             storedReportXML.setDateTo(dateTo);
 
-            storedReportXMLService.save(storedReportXML);
-        }
+            //storedReportXMLService.save(storedReportXML);
+            throw new AssertionError("Not implement");
+        }*/
+        throw new AssertionError("Not implement");
     }
 
     private void importSecurity(Document document, AppUser appUser) throws XPathExpressionException {
-        XPath xpath = pathFactory.newXPath();
+        /*XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//spot_portfolio_security_params/item");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
 
@@ -114,11 +117,12 @@ public class ImportXMLOpenBroker implements ImportXML {
                     throw new AssertionError("Unknown security type:" + securityType.name());
             }
             securityService.save(security);
-        }
+        }*/
+        throw new AssertionError("Not implement");
     }
 
     private void importMaidDeals(Document document, AppUser appUser) throws XPathExpressionException {
-        XPath xpath = pathFactory.newXPath();
+        /*XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//spot_main_deals_conclusion/item");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
 
@@ -180,7 +184,8 @@ public class ImportXMLOpenBroker implements ImportXML {
             } else {
                 throw new AssertionError("Unknown security type:" + security.getType().name());
             }
-        }
+        }*/
+        throw new AssertionError("Not implement");
     }
     // TODO: add import of cashflow
 }

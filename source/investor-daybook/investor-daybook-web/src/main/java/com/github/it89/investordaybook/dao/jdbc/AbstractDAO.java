@@ -1,4 +1,4 @@
-package com.github.it89.investordaybook.dao;
+package com.github.it89.investordaybook.dao.jdbc;
 
 import java.util.List;
 

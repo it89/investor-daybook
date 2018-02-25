@@ -12,7 +12,7 @@ import java.util.List;
 @Service("securityService")
 @Transactional
 public class SecurityServiceImpl implements SecurityService {
-    private final SecurityDAO dao;
+    /*private final SecurityDAO dao;
 
     @Autowired
     public SecurityServiceImpl(SecurityDAO dao) {
@@ -58,7 +58,7 @@ public class SecurityServiceImpl implements SecurityService {
             throw new IllegalArgumentException("AppUser is null");
         }
         return dao.getList(appUser);
-    }
+    }*/
 
 
 }

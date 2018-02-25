@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("appUserService")
-@Transactional
 public class AppUserServiceImpl implements AppUserService {
     @Autowired
     private AppUserDAO dao;

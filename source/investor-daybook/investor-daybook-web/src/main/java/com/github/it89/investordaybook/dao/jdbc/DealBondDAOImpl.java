@@ -1,12 +1,10 @@
-package com.github.it89.investordaybook.dao;
+package com.github.it89.investordaybook.dao.jdbc;
 
+import com.github.it89.investordaybook.dao.DealBondDAO;
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.DealBond;
 import com.github.it89.investordaybook.model.daybook.SecurityBond;
-import com.github.it89.investordaybook.model.daybook.SecurityStock;
 import com.github.it89.investordaybook.model.daybook.TradeOperation;
-import com.github.it89.investordaybook.service.dao.AppUserService;
-import com.github.it89.investordaybook.service.dao.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,8 +21,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
-@Qualifier("dealBondDAO")
+/*@Repository
+@Qualifier("dealBondDAO")*/
 public class DealBondDAOImpl extends AbstractDAO<DealBond> implements DealBondDAO {
     private NamedParameterJdbcTemplate jdbcTemplate;
     private DataSource mDataSource;
