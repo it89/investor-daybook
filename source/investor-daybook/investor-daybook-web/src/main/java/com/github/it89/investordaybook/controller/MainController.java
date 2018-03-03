@@ -1,42 +1,20 @@
 package com.github.it89.investordaybook.controller;
 
-import com.github.it89.investordaybook.model.daybook.DealBond;
-import com.github.it89.investordaybook.model.daybook.DealStock;
-import com.github.it89.investordaybook.model.daybook.Security;
-import com.github.it89.investordaybook.model.daybook.StoredReportXML;
-import com.github.it89.investordaybook.model.imp.xml.ImportXML;
-import com.github.it89.investordaybook.model.imp.xml.ImportXMLOpenBroker;
-import com.github.it89.investordaybook.service.CreateStoredReportXML;
 import com.github.it89.investordaybook.service.DoSomething;
-import com.github.it89.investordaybook.service.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MainController {
     @Autowired
     private DoSomething doSomething;
-    /*@Autowired
-    private CreateStoredReportXML createStoredReportXML;
-    @Autowired
-    private StoredReportXMLService storedReportXMLService;
-    @Autowired
-    AppUserService appUserService;
-    @Autowired
-    ImportXML importXML;
-    @Autowired
-    SecurityService securityService;
-    @Autowired
-    DealStockService dealStockService;
-    @Autowired
-    DealBondService dealBondService;*/
+
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {

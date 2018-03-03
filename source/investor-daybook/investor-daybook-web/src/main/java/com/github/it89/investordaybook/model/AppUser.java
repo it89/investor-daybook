@@ -4,13 +4,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
-
-@NamedQueries({
-        @NamedQuery(name="AppUser.findById",
-                query="select u from AppUser u where u.id = :id"),
-        @NamedQuery(name="AppUser.findByLogin",
-                query="select u from AppUser u where upper(u.login) = upper(:login)")
-})
 @Entity
 @Table(name = "app_user")
 public class AppUser {
