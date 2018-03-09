@@ -17,7 +17,7 @@ public class AppUserServiceImpl implements AppUserService{
     @Override
     @Transactional(readOnly = true)
     public AppUser findById(long id) {
-        return appUserRepository.findOne(id);
+        return appUserRepository.findById(id).get();
     }
 
     @Override

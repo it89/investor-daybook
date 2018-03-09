@@ -24,7 +24,7 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     @Transactional(readOnly = true)
     public Security findById(long id) {
-        return securityRepository.findOne(id);
+        return securityRepository.findById(id).get();
     }
 
     @Override

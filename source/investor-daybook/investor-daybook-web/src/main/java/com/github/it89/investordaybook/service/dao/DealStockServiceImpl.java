@@ -21,7 +21,7 @@ public class DealStockServiceImpl implements DealStockService {
     @Override
     @Transactional(readOnly = true)
     public DealStock findById(long id) {
-        return dealStockRepository.findOne(id);
+        return dealStockRepository.findById(id).get();
     }
 
     @Override
