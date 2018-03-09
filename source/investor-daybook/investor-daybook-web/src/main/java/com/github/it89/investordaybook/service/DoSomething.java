@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service("doSomething")
 public class DoSomething {
@@ -36,6 +38,7 @@ public class DoSomething {
         dealStock.setSecurity(security);
         dealStock.setDealNumber("777");
         dealStock.setPrice(BigDecimal.valueOf(100.459));
+        dealStock.setDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
         dealStockService.save(dealStock);
         return dealStockService.findById(dealStock.getId()).toString();
     }

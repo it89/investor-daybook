@@ -36,8 +36,8 @@ public class DealStock extends Deal {
                 ", version=" + version +
                 ", security=" + security +
                 ", dealNumber='" + dealNumber + '\'' +
-                /*", dateTime=" + dateTime +
-                ", operation=" + operation +
+                ", dateTime=" + dateTime +
+                /*", operation=" + operation +
                 ", amount=" + amount +
                 ", volume=" + volume +
                 ", commission=" + commission +*/

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "deal")
@@ -14,8 +15,8 @@ public abstract class Deal {
     protected int version;
     protected Security security;
     protected String dealNumber;
-    /*protected LocalDateTime dateTime;
-    protected TradeOperation operation;
+    protected LocalDateTime dateTime;
+    /*protected TradeOperation operation;
     protected long amount;
     protected BigDecimal volume;
     protected BigDecimal commission;*/
@@ -61,7 +62,9 @@ public abstract class Deal {
         this.dealNumber = dealNumber;
     }
 
-    /*public LocalDateTime getDateTime() {
+    @NotNull
+    @Column(name = "date_time", nullable = false)
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
@@ -69,7 +72,7 @@ public abstract class Deal {
         this.dateTime = dateTime;
     }
 
-    public TradeOperation getOperation() {
+    /*public TradeOperation getOperation() {
         return operation;
     }
 
