@@ -1,90 +1,22 @@
 package com.github.it89.investordaybook.model.daybook;
 
 import com.github.it89.investordaybook.model.AppUser;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "deal_stock")
 public class DealStock extends Deal {
     private BigDecimal price;
 
-    public static class Builder {
-        private Long id;
-        private SecurityStock security;
-        private String dealNumber;
-        private LocalDateTime dateTime;
-        private TradeOperation operation;
-        private long amount;
-        private BigDecimal volume;
-        private BigDecimal commission;
-        private AppUser appUser;
-        private BigDecimal price;
-
-        public Builder(String dealNumber) {
-            this.dealNumber = dealNumber;
-        }
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder security(SecurityStock security) {
-            this.security = security;
-            return this;
-        }
-
-        public Builder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
-            return this;
-        }
-
-        public Builder operation(TradeOperation operation) {
-            this.operation = operation;
-            return this;
-        }
-
-        public Builder amount(long amount) {
-            this.amount = amount;
-            return this;
-        }
-
-        public Builder volume(BigDecimal volume) {
-            this.volume = volume;
-            return this;
-        }
-
-        public Builder commission(BigDecimal commission) {
-            this.commission = commission;
-            return this;
-        }
-
-        public Builder appUser(AppUser appUser) {
-            this.appUser = appUser;
-            return this;
-        }
-
-        public Builder price(BigDecimal price) {
-            this.price = price;
-            return this;
-        }
-
-        public DealStock build() {
-            DealStock deal = new DealStock();
-            deal.setId(this.id);
-            deal.setSecurity(this.security);
-            deal.setDealNumber(this.dealNumber);
-            deal.setDateTime(this.dateTime);
-            deal.setOperation(this.operation);
-            deal.setAmount(this.amount);
-            deal.setVolume(this.volume);
-            deal.setCommission(this.commission);
-            deal.setAppUser(this.appUser);
-            deal.setPrice(this.price);
-            return deal;
-        }
-    }
-
+    @NotNull
+    @Column(name = "price", nullable = false)
     public BigDecimal getPrice() {
         return price;
     }
@@ -101,14 +33,14 @@ public class DealStock extends Deal {
         return "DealStock{" +
                 "price=" + price +
                 ", id=" + id +
+                ", version=" + version +
                 ", security=" + security +
                 ", dealNumber='" + dealNumber + '\'' +
-                ", dateTime=" + dateTime +
+                /*", dateTime=" + dateTime +
                 ", operation=" + operation +
                 ", amount=" + amount +
                 ", volume=" + volume +
-                ", commission=" + commission +
-                ", appUser=" + appUser +
+                ", commission=" + commission +*/
                 '}';
     }
 }

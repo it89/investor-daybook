@@ -14,8 +14,12 @@ import java.util.List;
 @Repository
 @Transactional
 public class SecurityServiceImpl implements SecurityService {
+    private final SecurityRepository securityRepository;
+
     @Autowired
-    private SecurityRepository securityRepository;
+    public SecurityServiceImpl(SecurityRepository securityRepository) {
+        this.securityRepository = securityRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -31,12 +35,6 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void save(Security security) {
-        if (security.getId() == null) {
-            Security oldVersion = securityRepository.findByIsinAndAppUser(security.getIsin(), security.getAppUser());
-            if (oldVersion != null) {
-                security.setId(oldVersion.getId());
-            }
-        }
         securityRepository.save(security);
     }
 

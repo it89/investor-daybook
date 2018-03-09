@@ -1,8 +1,7 @@
 package com.github.it89.investordaybook.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "app_user")
@@ -20,7 +19,7 @@ public class AppUser {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -28,8 +27,8 @@ public class AppUser {
         this.id = id;
     }
 
-    @NotEmpty
-    @Column(name="login", nullable=false)
+    @NotNull
+    @Column(name = "login", nullable = false)
     public String getLogin() {
         return login;
     }
@@ -37,8 +36,8 @@ public class AppUser {
         this.login = login;
     }
 
-    @NotEmpty
-    @Column(name="password", nullable=false)
+    @NotNull
+    @Column(name = "password", nullable = false)
     public String getPassword() {
         return password;
     }

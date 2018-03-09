@@ -1,10 +1,10 @@
 package com.github.it89.investordaybook.model.daybook;
 
 import com.github.it89.investordaybook.model.AppUser;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "security")
@@ -40,7 +40,7 @@ public class Security {
         this.version = version;
     }
 
-    @NotEmpty
+    @NotNull
     @Column(name = "isin", nullable = false)
     public String getIsin() {
         return isin;
@@ -50,7 +50,7 @@ public class Security {
         this.isin = isin;
     }
 
-    @NotEmpty
+    @NotNull
     @Column(name = "ticker", nullable = false)
     public String getTicker() {
         return ticker;
@@ -60,7 +60,7 @@ public class Security {
         this.ticker = ticker;
     }
 
-    @NotEmpty
+    @NotNull
     @Column(name = "caption", nullable = false)
     public String getCaption() {
         return caption;
@@ -70,7 +70,7 @@ public class Security {
         this.caption = caption;
     }
 
-    @Nullable
+    @NotNull
     @Column(name = "code_grn")
     public String getCodeGRN() {
         return codeGRN;

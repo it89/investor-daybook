@@ -1,61 +1,71 @@
 package com.github.it89.investordaybook.model.daybook;
 
-import com.github.it89.investordaybook.model.AppUser;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
+@Entity
+@Table(name = "deal")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Deal {
     @Nullable
     protected Long id;
+    protected int version;
     protected Security security;
     protected String dealNumber;
-    protected LocalDateTime dateTime;
+    /*protected LocalDateTime dateTime;
     protected TradeOperation operation;
     protected long amount;
     protected BigDecimal volume;
-    protected BigDecimal commission;
-    protected AppUser appUser;
+    protected BigDecimal commission;*/
 
+    @Nullable
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 
+    @Version
+    @Column(name = "version", nullable = false)
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "security_id")
     public Security getSecurity() {
         return security;
     }
 
     public void setSecurity(Security security) {
-        if (security == null) {
-            throw new IllegalArgumentException("security must be specified");
-        }
         this.security = security;
     }
 
+    @NotNull
+    @Column(name = "deal_number", nullable = false)
     public String getDealNumber() {
         return dealNumber;
     }
 
     public void setDealNumber(String dealNumber) {
-        if ((dealNumber == null) || dealNumber.length() == 0) {
-            throw new IllegalArgumentException("dealNumber must be specified");
-        }
         this.dealNumber = dealNumber;
     }
 
-    public LocalDateTime getDateTime() {
+    /*public LocalDateTime getDateTime() {
         return dateTime;
     }
 
     public void setDateTime(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            throw new IllegalArgumentException("dateTime must be specified");
-        }
         this.dateTime = dateTime;
     }
 
@@ -64,9 +74,6 @@ public abstract class Deal {
     }
 
     public void setOperation(TradeOperation operation) {
-        if (operation == null) {
-            throw new IllegalArgumentException("operation must be specified");
-        }
         this.operation = operation;
     }
 
@@ -83,9 +90,6 @@ public abstract class Deal {
     }
 
     public void setVolume(BigDecimal volume) {
-        if (volume == null) {
-            throw new IllegalArgumentException("volume must be specified");
-        }
         this.volume = volume;
     }
 
@@ -94,20 +98,6 @@ public abstract class Deal {
     }
 
     public void setCommission(BigDecimal commission) {
-        if (commission == null) {
-            throw new IllegalArgumentException("commission must be specified");
-        }
         this.commission = commission;
-    }
-
-    public AppUser getAppUser() {
-        return appUser;
-    }
-
-    public void setAppUser(AppUser appUser) {
-        if (appUser == null) {
-            throw new IllegalArgumentException("appUser must be specified");
-        }
-        this.appUser = appUser;
-    }
+    }*/
 }
