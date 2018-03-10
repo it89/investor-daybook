@@ -70,6 +70,7 @@ public class Security {
         this.caption = caption;
     }
 
+    @Nullable
     @Column(name = "code_grn")
     public String getCodeGRN() {
         return codeGRN;
@@ -79,6 +80,7 @@ public class Security {
         this.codeGRN = codeGRN;
     }
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "app_user_id")
     public AppUser getAppUser() {

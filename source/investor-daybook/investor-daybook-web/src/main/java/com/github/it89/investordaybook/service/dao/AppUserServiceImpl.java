@@ -11,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class AppUserServiceImpl implements AppUserService{
+    private final AppUserRepository appUserRepository;
+
     @Autowired
-    private AppUserRepository appUserRepository;
+    public AppUserServiceImpl(AppUserRepository appUserRepository) {
+        this.appUserRepository = appUserRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)

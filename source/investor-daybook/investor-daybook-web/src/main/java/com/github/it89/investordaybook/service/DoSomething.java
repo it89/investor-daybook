@@ -48,8 +48,4 @@ public class DoSomething {
         dealBondService.save(dealStock);
         return dealBondService.findById(dealStock.getId()).toString();
     }
-
-    public static void main(String[] args) {
-        System.out.println(SecurityType.STOCK);
-    }
 }
