@@ -16,15 +16,12 @@ public class DealStock extends Deal {
     private BigDecimal price;
 
     @NotNull
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     public BigDecimal getPrice() {
         return price;
     }
 
     public void setPrice(BigDecimal price) {
-        if (price == null) {
-            throw new IllegalArgumentException("price must be specified");
-        }
         this.price = price;
     }
 
@@ -37,10 +34,10 @@ public class DealStock extends Deal {
                 ", security=" + security +
                 ", dealNumber='" + dealNumber + '\'' +
                 ", dateTime=" + dateTime +
-                /*", operation=" + operation +
+                ", operation=" + operation +
                 ", amount=" + amount +
                 ", volume=" + volume +
-                ", commission=" + commission +*/
+                ", commission=" + commission +
                 '}';
     }
 }

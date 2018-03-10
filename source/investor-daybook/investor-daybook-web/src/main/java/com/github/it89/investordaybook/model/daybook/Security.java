@@ -70,7 +70,6 @@ public class Security {
         this.caption = caption;
     }
 
-    @NotNull
     @Column(name = "code_grn")
     public String getCodeGRN() {
         return codeGRN;

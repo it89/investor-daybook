@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,10 +17,10 @@ public abstract class Deal {
     protected Security security;
     protected String dealNumber;
     protected LocalDateTime dateTime;
-    /*protected TradeOperation operation;
+    protected TradeOperation operation;
     protected long amount;
     protected BigDecimal volume;
-    protected BigDecimal commission;*/
+    protected BigDecimal commission;
 
     @Nullable
     @Id
@@ -33,7 +34,7 @@ public abstract class Deal {
     }
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     public int getVersion() {
         return version;
     }
@@ -53,7 +54,7 @@ public abstract class Deal {
     }
 
     @NotNull
-    @Column(name = "deal_number", nullable = false)
+    @Column(name = "deal_number")
     public String getDealNumber() {
         return dealNumber;
     }
@@ -63,7 +64,7 @@ public abstract class Deal {
     }
 
     @NotNull
-    @Column(name = "date_time", nullable = false)
+    @Column(name = "date_time")
     public LocalDateTime getDateTime() {
         return dateTime;
     }
@@ -72,7 +73,10 @@ public abstract class Deal {
         this.dateTime = dateTime;
     }
 
-    /*public TradeOperation getOperation() {
+    @NotNull
+    @Column(name = "operation")
+    @Enumerated(EnumType.STRING)
+    public TradeOperation getOperation() {
         return operation;
     }
 
@@ -80,6 +84,8 @@ public abstract class Deal {
         this.operation = operation;
     }
 
+    @NotNull
+    @Column(name = "amount")
     public long getAmount() {
         return amount;
     }
@@ -88,6 +94,8 @@ public abstract class Deal {
         this.amount = amount;
     }
 
+    @NotNull
+    @Column(name = "volume")
     public BigDecimal getVolume() {
         return volume;
     }
@@ -96,11 +104,13 @@ public abstract class Deal {
         this.volume = volume;
     }
 
+    @NotNull
+    @Column(name = "commission")
     public BigDecimal getCommission() {
         return commission;
     }
 
     public void setCommission(BigDecimal commission) {
         this.commission = commission;
-    }*/
+    }
 }
