@@ -45,11 +45,11 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Security findByCaption(String caption, AppUser appUser) {
-        return null;
+        return securityRepository.findByCaptionAndAppUser(caption, appUser);
     }
 
     @Override
     public List<Security> getList(AppUser appUser) {
-        return null;
+        return securityRepository.findByAppUser(appUser);
     }
 }

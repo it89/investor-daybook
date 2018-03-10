@@ -1,21 +1,42 @@
 package com.github.it89.investordaybook.controller;
 
+import com.github.it89.investordaybook.model.AppUser;
+import com.github.it89.investordaybook.model.daybook.DealBond;
+import com.github.it89.investordaybook.model.daybook.DealStock;
+import com.github.it89.investordaybook.model.daybook.Security;
+import com.github.it89.investordaybook.model.daybook.StoredReportXML;
+import com.github.it89.investordaybook.service.CreateStoredReportXML;
 import com.github.it89.investordaybook.service.DoSomething;
+import com.github.it89.investordaybook.service.dao.*;
+import com.github.it89.investordaybook.service.xml.ImportXML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Controller
 public class MainController {
     @Autowired
     private DoSomething doSomething;
+    @Autowired
+    AppUserService appUserService;
+    @Autowired
+    SecurityService securityService;
+    @Autowired
+    DealStockService dealStockService;
+    @Autowired
+    DealBondService dealBondService;
+    @Autowired
+    CreateStoredReportXML createStoredReportXML;
+    @Autowired
+    StoredReportXMLService storedReportXMLService;
+    @Autowired
+    ImportXML importXML;
 
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -37,7 +58,7 @@ public class MainController {
     @RequestMapping(value = "/uploadReportXML", method = RequestMethod.POST)
     @ResponseBody
     public String uploadFileHandler(@RequestParam("file") MultipartFile file) {
-        return createStoredReportXML.upload(file, getUserName());
+        return createStoredReportXML.upload(file, getAppUser());
     }
 
     private String getUserName() {
@@ -50,7 +71,11 @@ public class MainController {
         }
     }
 
-    /*@RequestMapping(value = {"/import" }, method = RequestMethod.GET)
+    private AppUser getAppUser() {
+        return appUserService.findByLogin(getUserName());
+    }
+
+    @RequestMapping(value = {"/import" }, method = RequestMethod.GET)
     public String listStoredXML(ModelMap model) {
         List<StoredReportXML> reports = storedReportXMLService.getList(appUserService.findByLogin(getUserName()));
         model.addAttribute("reports", reports);
@@ -68,12 +93,12 @@ public class MainController {
 
     @RequestMapping(value = {"/securities" }, method = RequestMethod.GET)
     public String securities(ModelMap model) {
-        List<Security> securities = securityService.getList(appUserService.findByLogin(getUserName()));
+        List<Security> securities = securityService.getList(getAppUser());
         model.addAttribute("securities", securities);
         return "securities";
     }
 
-    @RequestMapping(value = {"/deals" }, method = RequestMethod.GET)
+    /*@RequestMapping(value = {"/deals" }, method = RequestMethod.GET)
     public String deals(ModelMap model) {
         List<DealStock> stockDeals = dealStockService.getList(appUserService.findByLogin(getUserName()));
         List<DealBond> bondDeals = dealBondService.getList(appUserService.findByLogin(getUserName()));

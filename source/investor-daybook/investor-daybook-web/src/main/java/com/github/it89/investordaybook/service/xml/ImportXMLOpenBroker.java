@@ -1,11 +1,17 @@
-package com.github.it89.investordaybook.model.imp.xml;
+package com.github.it89.investordaybook.service.xml;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.*;
-import com.github.it89.investordaybook.service.dao.*;
+import com.github.it89.investordaybook.service.dao.DealBondService;
+import com.github.it89.investordaybook.service.dao.DealStockService;
+import com.github.it89.investordaybook.service.dao.SecurityService;
+import com.github.it89.investordaybook.service.dao.StoredReportXMLService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -16,42 +22,45 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.xml.xpath.*;
+import java.io.IOException;
+import java.time.LocalDate;
 
-@Service("importXMLOpenBroker")
+@Service
+@Repository
+@Transactional
 public class ImportXMLOpenBroker implements ImportXML {
-    /*@Autowired
-    private SecurityService securityService;
-    @Autowired
-    private DealBondService dealBondService;
-    @Autowired
-    private DealStockService dealStockService;
-    @Autowired
-    private StoredReportXMLService storedReportXMLService;*/
+    private final SecurityService securityService;
+    private final DealBondService dealBondService;
+    private final DealStockService dealStockService;
+    private final StoredReportXMLService storedReportXMLService;
 
     private XPathFactory pathFactory = XPathFactory.newInstance();
 
+    @Autowired
+    public ImportXMLOpenBroker(SecurityService securityService, DealBondService dealBondService, DealStockService dealStockService, StoredReportXMLService storedReportXMLService) {
+        this.securityService = securityService;
+        this.dealBondService = dealBondService;
+        this.dealStockService = dealStockService;
+        this.storedReportXMLService = storedReportXMLService;
+    }
+
     @Override
     public void importXML(StoredReportXML storedReportXML) {
-        /*DocumentBuilder documentBuilder;
+        DocumentBuilder documentBuilder;
         try {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = documentBuilder.parse(IOUtils.toInputStream(storedReportXML.getText()));
             importSecurity(document, storedReportXML.getAppUser());
-            importMaidDeals(document, storedReportXML.getAppUser());
+            //importMaidDeals(document, storedReportXML.getAppUser());
             importInfo(document, storedReportXML);
         } catch (ParserConfigurationException | XPathExpressionException | SAXException | IOException ex) {
             ex.printStackTrace(System.out);
-        }*/
-        throw new AssertionError("Not implement");
+        }
     }
 
     private void importInfo(Document document, StoredReportXML storedReportXML) throws XPathExpressionException {
-        /*XPath xpath = pathFactory.newXPath();
+        XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//broker_report");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
         if (nodes.getLength() > 0) {
@@ -62,14 +71,12 @@ public class ImportXMLOpenBroker implements ImportXML {
             storedReportXML.setDateFrom(dateFrom);
             storedReportXML.setDateTo(dateTo);
 
-            //storedReportXMLService.save(storedReportXML);
-            throw new AssertionError("Not implement");
-        }*/
-        throw new AssertionError("Not implement");
+            storedReportXMLService.save(storedReportXML);
+        }
     }
 
     private void importSecurity(Document document, AppUser appUser) throws XPathExpressionException {
-        /*XPath xpath = pathFactory.newXPath();
+        XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//spot_portfolio_security_params/item");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
 
@@ -78,47 +85,26 @@ public class ImportXMLOpenBroker implements ImportXML {
             NamedNodeMap nodeMap = n.getAttributes();
 
             String isin = nodeMap.getNamedItem("isin").getTextContent();
-            String textSecurityType = nodeMap.getNamedItem("security_type").getTextContent();
             String ticker = nodeMap.getNamedItem("ticker").getTextContent();
             String caption = nodeMap.getNamedItem("security_name").getTextContent().trim();
-            SecurityType securityType;
-            if (textSecurityType.equalsIgnoreCase("Акции") || textSecurityType.equalsIgnoreCase("GDR")) {
-                securityType = SecurityType.STOCK;
-            } else if (textSecurityType.equalsIgnoreCase("Облигации")) {
-                securityType = SecurityType.BOND;
-            } else {
-                throw new XPathExpressionException("Not valid XML");
-            }
             Node nodeCodeGRN = nodeMap.getNamedItem("security_grn_code");
             String codeGRN = null;
             if (nodeCodeGRN != null) {
                 codeGRN = nodeCodeGRN.getTextContent();
             }
 
-            Security security;
-            switch (securityType) {
-                case STOCK:
-                    security = new SecurityStock.Builder(isin)
-                        .ticker(ticker)
-                        .caption(caption)
-                        .codeGRN(codeGRN)
-                        .appUser(appUser)
-                        .build();
-                    break;
-                case BOND:
-                    security = new SecurityBond.Builder(isin)
-                            .ticker(ticker)
-                            .caption(caption)
-                            .codeGRN(codeGRN)
-                            .appUser(appUser)
-                            .build();
-                    break;
-                default:
-                    throw new AssertionError("Unknown security type:" + securityType.name());
+            Security security = securityService.findByIsin(isin, appUser);
+            if (security == null) {
+                security = new Security();
+                security.setIsin(isin);
+                security.setAppUser(appUser);
             }
+            security.setTicker(ticker);
+            security.setCaption(caption);
+            security.setCodeGRN(codeGRN);
+
             securityService.save(security);
-        }*/
-        throw new AssertionError("Not implement");
+        }
     }
 
     private void importMaidDeals(Document document, AppUser appUser) throws XPathExpressionException {

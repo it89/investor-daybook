@@ -25,7 +25,7 @@ public class DoSomething {
 
     public String doIt() {
         AppUser appUser = appUserService.findByLogin("test");
-        Security security = securityService.findByIsin("4545454x", appUser);
+        /*Security security = securityService.findByIsin("4545454x", appUser);
         if (security == null) {
             security = new Security();
             security.setIsin("4545454x");
@@ -46,6 +46,8 @@ public class DoSomething {
         dealStock.setVolume(BigDecimal.valueOf(50.34));
         dealStock.setCommission(BigDecimal.valueOf(0.54));
         dealBondService.save(dealStock);
-        return dealBondService.findById(dealStock.getId()).toString();
+        return dealBondService.findById(dealStock.getId()).toString();*/
+        Security security = securityService.findByCaption("cap", appUser);
+        return security.toString();
     }
 }
