@@ -18,6 +18,7 @@ public class Security {
     @Nullable
     private String codeGRN;
     private AppUser appUser;
+    private SecurityType type;
 
     @Nullable
     @Id
@@ -92,6 +93,17 @@ public class Security {
             throw new IllegalArgumentException("appUser must be specified");
         }
         this.appUser = appUser;
+    }
+
+    @NotNull
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    public SecurityType getType() {
+        return type;
+    }
+
+    public void setType(SecurityType type) {
+        this.type = type;
     }
 
     @Override

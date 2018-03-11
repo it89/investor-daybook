@@ -1,7 +1,9 @@
 package com.github.it89.investordaybook.service.xml;
 
 import com.github.it89.investordaybook.model.AppUser;
-import com.github.it89.investordaybook.model.daybook.*;
+import com.github.it89.investordaybook.model.daybook.Security;
+import com.github.it89.investordaybook.model.daybook.SecurityType;
+import com.github.it89.investordaybook.model.daybook.StoredReportXML;
 import com.github.it89.investordaybook.service.dao.DealBondService;
 import com.github.it89.investordaybook.service.dao.DealStockService;
 import com.github.it89.investordaybook.service.dao.SecurityService;
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -21,7 +22,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -85,8 +85,20 @@ public class ImportXMLOpenBroker implements ImportXML {
             NamedNodeMap nodeMap = n.getAttributes();
 
             String isin = nodeMap.getNamedItem("isin").getTextContent();
+            String textSecurityType = nodeMap.getNamedItem("security_type").getTextContent();
             String ticker = nodeMap.getNamedItem("ticker").getTextContent();
             String caption = nodeMap.getNamedItem("security_name").getTextContent().trim();
+            SecurityType securityType;
+            if (textSecurityType.equalsIgnoreCase("Акции")) {
+                securityType = SecurityType.STOCK;
+            } else if (textSecurityType.equalsIgnoreCase("Облигации")) {
+                securityType = SecurityType.BOND;
+            } else if (textSecurityType.equalsIgnoreCase("GDR")) {
+                securityType = SecurityType.GDR;
+            } else {
+                throw new XPathExpressionException("Not valid XML");
+            }
+
             Node nodeCodeGRN = nodeMap.getNamedItem("security_grn_code");
             String codeGRN = null;
             if (nodeCodeGRN != null) {
@@ -102,6 +114,7 @@ public class ImportXMLOpenBroker implements ImportXML {
             security.setTicker(ticker);
             security.setCaption(caption);
             security.setCodeGRN(codeGRN);
+            security.setType(securityType);
 
             securityService.save(security);
         }

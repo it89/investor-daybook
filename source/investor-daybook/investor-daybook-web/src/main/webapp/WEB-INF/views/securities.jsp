@@ -15,6 +15,7 @@
             <tr>
                 <th>Ticker</th>
                 <th>Caption</th>
+                <th>Type</th>
             </tr>
             </thead>
             <tbody>
@@ -22,6 +23,7 @@
                 <tr>
                     <td>${security.ticker}</td>
                     <td>${security.caption}</td>
+                    <td>${security.type}</td>
                 </tr>
             </c:forEach>
             </tbody>
