@@ -9,6 +9,10 @@
 <div class="generic-container">
     <div class="panel panel-default">
         <!-- Default panel contents -->
+        <a href="/uploadXML">Upload XML report</a>
+        <br/>
+        <a href="/import-report-all">Import all</a>
+
         <div class="panel-heading"><span class="lead">List of reports </span></div>
         <table class="table table-hover">
             <thead>

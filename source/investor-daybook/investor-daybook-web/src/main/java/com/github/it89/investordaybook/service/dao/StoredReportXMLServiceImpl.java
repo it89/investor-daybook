@@ -28,7 +28,7 @@ public class StoredReportXMLServiceImpl implements StoredReportXMLService {
 
     @Override
     public List<StoredReportXML> getList(AppUser appUser) {
-        return storedReportXMLRepository.findAllByAppUser(appUser);
+        return storedReportXMLRepository.findAllByAppUserOrderByDateFrom(appUser);
     }
 
     @Override
