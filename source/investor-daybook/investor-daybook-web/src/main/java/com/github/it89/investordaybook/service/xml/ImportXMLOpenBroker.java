@@ -1,9 +1,7 @@
 package com.github.it89.investordaybook.service.xml;
 
 import com.github.it89.investordaybook.model.AppUser;
-import com.github.it89.investordaybook.model.daybook.Security;
-import com.github.it89.investordaybook.model.daybook.SecurityType;
-import com.github.it89.investordaybook.model.daybook.StoredReportXML;
+import com.github.it89.investordaybook.model.daybook.*;
 import com.github.it89.investordaybook.service.dao.DealBondService;
 import com.github.it89.investordaybook.service.dao.DealStockService;
 import com.github.it89.investordaybook.service.dao.SecurityService;
@@ -24,7 +22,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @Repository
@@ -52,7 +52,7 @@ public class ImportXMLOpenBroker implements ImportXML {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = documentBuilder.parse(IOUtils.toInputStream(storedReportXML.getText()));
             importSecurity(document, storedReportXML.getAppUser());
-            //importMaidDeals(document, storedReportXML.getAppUser());
+            importMaidDeals(document, storedReportXML.getAppUser());
             importInfo(document, storedReportXML);
         } catch (ParserConfigurationException | XPathExpressionException | SAXException | IOException ex) {
             ex.printStackTrace(System.out);
@@ -121,7 +121,7 @@ public class ImportXMLOpenBroker implements ImportXML {
     }
 
     private void importMaidDeals(Document document, AppUser appUser) throws XPathExpressionException {
-        /*XPath xpath = pathFactory.newXPath();
+        XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//spot_main_deals_conclusion/item");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
 
@@ -155,36 +155,31 @@ public class ImportXMLOpenBroker implements ImportXML {
             BigDecimal volume = new BigDecimal(nodeMap.getNamedItem("volume_currency").getTextContent());
             BigDecimal commission = new BigDecimal(nodeMap.getNamedItem("broker_commission").getTextContent());
 
-            if (security.getType() == SecurityType.STOCK) {
-                DealStock dealStock = new DealStock.Builder(dealNumber)
-                        .security((SecurityStock) security)
-                        .dateTime(dateTime)
-                        .operation(operation)
-                        .amount(amount)
-                        .volume(volume)
-                        .commission(commission)
-                        .appUser(appUser)
-                        .price(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()))
-                        .build();
-                dealStockService.save(dealStock);
-            } else if (security.getType() == SecurityType.BOND){
-                DealBond dealBond = new DealBond.Builder(dealNumber)
-                        .security((SecurityBond) security)
-                        .dateTime(dateTime)
-                        .operation(operation)
-                        .amount(amount)
-                        .volume(volume)
-                        .commission(commission)
-                        .appUser(appUser)
-                        .pricePct(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()))
-                        .accumulatedCouponYield(new BigDecimal(nodeMap.getNamedItem("nkd").getTextContent()))
-                        .build();
+            if (security.getType().isBond()) {
+                DealBond dealBond = new DealBond();
+                dealBond.setPricePct(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()));
+                dealBond.setAccumulatedCouponYield(new BigDecimal(nodeMap.getNamedItem("nkd").getTextContent()));
+                dealBond.setDealNumber(dealNumber);
+                dealBond.setSecurity(security);
+                dealBond.setDateTime(dateTime);
+                dealBond.setOperation(operation);
+                dealBond.setAmount(amount);
+                dealBond.setVolume(volume);
+                dealBond.setCommission(commission);
                 dealBondService.save(dealBond);
             } else {
-                throw new AssertionError("Unknown security type:" + security.getType().name());
+                DealStock dealStock = new DealStock();
+                dealStock.setPrice(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()));
+                dealStock.setDealNumber(dealNumber);
+                dealStock.setSecurity(security);
+                dealStock.setDateTime(dateTime);
+                dealStock.setOperation(operation);
+                dealStock.setAmount(amount);
+                dealStock.setVolume(volume);
+                dealStock.setCommission(commission);
+                dealStockService.save(dealStock);
             }
-        }*/
-        throw new AssertionError("Not implement");
+        }
     }
     // TODO: add import of cashflow
 }

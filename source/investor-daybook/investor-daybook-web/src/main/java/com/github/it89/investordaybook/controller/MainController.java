@@ -98,14 +98,14 @@ public class MainController {
         return "securities";
     }
 
-    /*@RequestMapping(value = {"/deals" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/deals" }, method = RequestMethod.GET)
     public String deals(ModelMap model) {
         List<DealStock> stockDeals = dealStockService.getList(appUserService.findByLogin(getUserName()));
         List<DealBond> bondDeals = dealBondService.getList(appUserService.findByLogin(getUserName()));
         model.addAttribute("stockDeals", stockDeals);
         model.addAttribute("bondDeals", bondDeals);
         return "deals";
-    }*/
+    }
 
     /////////------TEST-------------////////////////////////////////////////
     // TODO: For test only!
