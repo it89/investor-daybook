@@ -10,14 +10,11 @@ CREATE TABLE public.security
     caption character varying(500) COLLATE pg_catalog."default" NOT NULL,
     code_grn character varying(100) COLLATE pg_catalog."default",
     app_user_id bigint NOT NULL,
-    security_type_id bigint NOT NULL,
+    version integer NOT NULL,
+    type character varying(100) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT security_pkey PRIMARY KEY (id),
     CONSTRAINT security_app_user_id_fkey FOREIGN KEY (app_user_id)
         REFERENCES public.app_user (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT security_security_type_id_fkey FOREIGN KEY (security_type_id)
-        REFERENCES public.security_type (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -38,20 +35,11 @@ CREATE INDEX security_app_user_id_idx
     (app_user_id)
     TABLESPACE pg_default;
 
--- Index: security_isin_idx
+-- Index: security_isin_app_user_idx
 
--- DROP INDEX public.security_isin_idx;
+-- DROP INDEX public.security_isin_app_user_idx;
 
-CREATE INDEX security_isin_idx
+CREATE UNIQUE INDEX security_isin_app_user_idx
     ON public.security USING btree
-    (upper(isin::text) COLLATE pg_catalog."default")
-    TABLESPACE pg_default;
-
--- Index: security_security_type_id_idx
-
--- DROP INDEX public.security_security_type_id_idx;
-
-CREATE INDEX security_security_type_id_idx
-    ON public.security USING btree
-    (security_type_id)
+    (upper(isin::text) COLLATE pg_catalog."default", app_user_id)
     TABLESPACE pg_default;

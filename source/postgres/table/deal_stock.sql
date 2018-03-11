@@ -4,10 +4,10 @@
 
 CREATE TABLE public.deal_stock
 (
-    deal_id bigint NOT NULL,
+    id bigint NOT NULL,
     price numeric NOT NULL,
-    CONSTRAINT deal_stock_pkey PRIMARY KEY (deal_id),
-    CONSTRAINT deal_stock_deal_id_fkey FOREIGN KEY (deal_id)
+    CONSTRAINT deal_stock_pkey PRIMARY KEY (id),
+    CONSTRAINT deal_stock_deal_id_fkey FOREIGN KEY (id)
         REFERENCES public.deal (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
