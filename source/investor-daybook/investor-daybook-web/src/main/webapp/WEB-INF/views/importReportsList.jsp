@@ -9,13 +9,17 @@
 <div class="generic-container">
     <div class="panel panel-default">
         <!-- Default panel contents -->
+        <a href="/uploadXML">Upload XML report</a>
+
         <div class="panel-heading"><span class="lead">List of reports </span></div>
+        <a href="/import-report-all">Import all</a>
         <table class="table table-hover">
             <thead>
             <tr>
                 <th>filename</th>
                 <th>date from</th>
                 <th>date to</th>
+                <th>date of import</th>
                 <th width="100"></th>
             </tr>
             </thead>
@@ -25,6 +29,7 @@
                     <td>${report.filename}</td>
                     <td>${report.dateFrom}</td>
                     <td>${report.dateTo}</td>
+                    <td>${report.imortDateTime}</td>
                     <td><a href="<c:url value='/import-report-${report.id}' />" >import</a></td>
                 </tr>
             </c:forEach>

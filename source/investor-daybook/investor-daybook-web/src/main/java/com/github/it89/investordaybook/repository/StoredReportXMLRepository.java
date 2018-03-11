@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface StoredReportXMLRepository extends CrudRepository<StoredReportXML, Long> {
-    List<StoredReportXML> findAllByAppUser(AppUser appUser);
+    List<StoredReportXML> findAllByAppUserOrderByDateFrom(AppUser appUser);
 }

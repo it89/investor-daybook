@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Service
 @Repository
@@ -70,6 +71,7 @@ public class ImportXMLOpenBroker implements ImportXML {
             LocalDate dateTo = LocalDate.parse(nodeMap.getNamedItem("date_to").getTextContent().substring(0, 10));
             storedReportXML.setDateFrom(dateFrom);
             storedReportXML.setDateTo(dateTo);
+            storedReportXML.setImortDateTime(ZonedDateTime.now());
 
             storedReportXMLService.save(storedReportXML);
         }
@@ -95,6 +97,8 @@ public class ImportXMLOpenBroker implements ImportXML {
                 securityType = SecurityType.BOND;
             } else if (textSecurityType.equalsIgnoreCase("GDR")) {
                 securityType = SecurityType.GDR;
+            } else if (textSecurityType.equalsIgnoreCase("ПАИ")) {
+                securityType = SecurityType.SHARE;
             } else {
                 throw new XPathExpressionException("Not valid XML");
             }

@@ -6,7 +6,6 @@
 <body>
     Hello world!
     <a href="/login">login</a>
-    <a href="/uploadXML">Upload XML report</a>
     <a href="/import">Stored XML reports</a>
 </body>
 </html>

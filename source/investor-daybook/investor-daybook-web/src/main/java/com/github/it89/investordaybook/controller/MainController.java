@@ -65,7 +65,7 @@ public class MainController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
-            return ((UserDetails)principal).getUsername();
+            return ((UserDetails) principal).getUsername();
         } else {
             return principal.toString();
         }
@@ -75,14 +75,14 @@ public class MainController {
         return appUserService.findByLogin(getUserName());
     }
 
-    @RequestMapping(value = {"/import" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/import"}, method = RequestMethod.GET)
     public String listStoredXML(ModelMap model) {
         List<StoredReportXML> reports = storedReportXMLService.getList(appUserService.findByLogin(getUserName()));
         model.addAttribute("reports", reports);
         return "importReportsList";
     }
 
-    @RequestMapping(value = { "/import-report-{repId}" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/import-report-{repId}"}, method = RequestMethod.GET)
     public String importReport(@PathVariable String repId) {
         StoredReportXML storedReportXML = storedReportXMLService.findById(Long.parseLong(repId));
         if (storedReportXML.getAppUser().getLogin().equalsIgnoreCase(getUserName())) {
@@ -91,14 +91,23 @@ public class MainController {
         return "redirect:/import";
     }
 
-    @RequestMapping(value = {"/securities" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/import-report-all"}, method = RequestMethod.GET)
+    public String importReportAll() {
+        List<StoredReportXML> list = storedReportXMLService.getList(getAppUser());
+        for (StoredReportXML storedReportXML : list) {
+            importXML.importXML(storedReportXML);
+        }
+        return "redirect:/import";
+    }
+
+    @RequestMapping(value = {"/securities"}, method = RequestMethod.GET)
     public String securities(ModelMap model) {
         List<Security> securities = securityService.getList(getAppUser());
         model.addAttribute("securities", securities);
         return "securities";
     }
 
-    @RequestMapping(value = {"/deals" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/deals"}, method = RequestMethod.GET)
     public String deals(ModelMap model) {
         List<DealStock> stockDeals = dealStockService.getList(appUserService.findByLogin(getUserName()));
         List<DealBond> bondDeals = dealBondService.getList(appUserService.findByLogin(getUserName()));

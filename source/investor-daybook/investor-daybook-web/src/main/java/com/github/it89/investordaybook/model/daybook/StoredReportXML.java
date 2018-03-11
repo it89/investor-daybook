@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "stored_report_xml")
@@ -17,6 +19,8 @@ public class StoredReportXML {
     private String text;
     private LocalDate dateFrom;
     private LocalDate dateTo;
+    @Nullable
+    private ZonedDateTime imortDateTime;
 
     @Nullable
     @Id
@@ -78,5 +82,15 @@ public class StoredReportXML {
 
     public void setDateTo(LocalDate dateTo) {
         this.dateTo = dateTo;
+    }
+
+    @Nullable
+    @Column(name = "import_date_time")
+    public ZonedDateTime getImortDateTime() {
+        return imortDateTime;
+    }
+
+    public void setImortDateTime(@Nullable ZonedDateTime imortDateTime) {
+        this.imortDateTime = imortDateTime;
     }
 }
