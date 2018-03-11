@@ -1,14 +1,14 @@
 package com.github.it89.investordaybook.controller;
 
+import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.DealBond;
 import com.github.it89.investordaybook.model.daybook.DealStock;
 import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.StoredReportXML;
-import com.github.it89.investordaybook.model.imp.xml.ImportXML;
-import com.github.it89.investordaybook.model.imp.xml.ImportXMLOpenBroker;
 import com.github.it89.investordaybook.service.CreateStoredReportXML;
 import com.github.it89.investordaybook.service.DoSomething;
 import com.github.it89.investordaybook.service.dao.*;
+import com.github.it89.investordaybook.service.xml.ImportXML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,19 +24,20 @@ public class MainController {
     @Autowired
     private DoSomething doSomething;
     @Autowired
-    private CreateStoredReportXML createStoredReportXML;
-    @Autowired
-    private StoredReportXMLService storedReportXMLService;
-    @Autowired
     AppUserService appUserService;
-    @Autowired
-    ImportXML importXML;
     @Autowired
     SecurityService securityService;
     @Autowired
     DealStockService dealStockService;
     @Autowired
     DealBondService dealBondService;
+    @Autowired
+    CreateStoredReportXML createStoredReportXML;
+    @Autowired
+    StoredReportXMLService storedReportXMLService;
+    @Autowired
+    ImportXML importXML;
+
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String homePage() {
@@ -49,8 +50,6 @@ public class MainController {
         return "accessDenied";
     }
 
-
-
     @RequestMapping(value = "/uploadXML", method = RequestMethod.GET)
     public String uploadXML() {
         return "uploadXML";
@@ -59,7 +58,7 @@ public class MainController {
     @RequestMapping(value = "/uploadReportXML", method = RequestMethod.POST)
     @ResponseBody
     public String uploadFileHandler(@RequestParam("file") MultipartFile file) {
-        return createStoredReportXML.upload(file, getUserName());
+        return createStoredReportXML.upload(file, getAppUser());
     }
 
     private String getUserName() {
@@ -70,6 +69,10 @@ public class MainController {
         } else {
             return principal.toString();
         }
+    }
+
+    private AppUser getAppUser() {
+        return appUserService.findByLogin(getUserName());
     }
 
     @RequestMapping(value = {"/import" }, method = RequestMethod.GET)
@@ -90,7 +93,7 @@ public class MainController {
 
     @RequestMapping(value = {"/securities" }, method = RequestMethod.GET)
     public String securities(ModelMap model) {
-        List<Security> securities = securityService.getList(appUserService.findByLogin(getUserName()));
+        List<Security> securities = securityService.getList(getAppUser());
         model.addAttribute("securities", securities);
         return "securities";
     }

@@ -1,6 +1,17 @@
 package com.github.it89.investordaybook.model.daybook;
 
 public enum SecurityType {
-    STOCK,
-    BOND
+    STOCK(false),
+    BOND(true),
+    GDR(false);
+
+    private boolean isBond;
+
+    private SecurityType(boolean isBond) {
+        this.isBond = isBond;
+    }
+
+    public boolean isBond() {
+        return isBond;
+    }
 }

@@ -17,25 +17,29 @@ import java.util.List;
 
 @Service("customUserDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
-	
-	@Autowired
-	private AppUserService appUserService;
-	
-	@Transactional(readOnly = true)
-	public UserDetails loadUserByUsername(String ssoId)
-			throws UsernameNotFoundException {
-		AppUser appUser = appUserService.findByLogin(ssoId);
-		if(appUser == null){
-			throw new UsernameNotFoundException("User not found");
-		}
-			return new org.springframework.security.core.userdetails.User(appUser.getLogin(), appUser.getPassword(),
-				 true, true, true, true, getGrantedAuthorities(appUser));
-	}
 
-    private List<GrantedAuthority> getGrantedAuthorities(AppUser appUser){
-		// TODO: Create roles
+    private final AppUserService appUserService;
+
+    @Autowired
+    public CustomUserDetailsService(AppUserService appUserService) {
+        this.appUserService = appUserService;
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String ssoId)
+            throws UsernameNotFoundException {
+        AppUser appUser = appUserService.findByLogin(ssoId);
+        if (appUser == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new org.springframework.security.core.userdetails.User(appUser.getLogin(), appUser.getPassword(),
+                true, true, true, true, getGrantedAuthorities(appUser));
+    }
+
+    private List<GrantedAuthority> getGrantedAuthorities(AppUser appUser) {
+        // TODO: Create roles
         List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         return authorities;
     }
 }

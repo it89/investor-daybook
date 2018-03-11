@@ -1,11 +1,16 @@
 package com.github.it89.investordaybook.model.daybook;
 
 import com.github.it89.investordaybook.model.AppUser;
-import com.github.it89.investordaybook.model.imp.xml.ImportXMLOpenBroker;
+import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "stored_report_xml")
 public class StoredReportXML {
+    @Nullable
     private Long id;
     private AppUser appUser;
     private String filename;
@@ -13,18 +18,20 @@ public class StoredReportXML {
     private LocalDate dateFrom;
     private LocalDate dateTo;
 
-    public StoredReportXML(AppUser appUser) {
-        this.appUser = appUser;
-    }
-
+    @Nullable
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "app_user_id")
     public AppUser getAppUser() {
         return appUser;
     }
@@ -33,6 +40,8 @@ public class StoredReportXML {
         this.appUser = appUser;
     }
 
+    @NotNull
+    @Column(name = "filename")
     public String getFilename() {
         return filename;
     }
@@ -41,6 +50,8 @@ public class StoredReportXML {
         this.filename = filename;
     }
 
+    @NotNull
+    @Column(name = "text")
     public String getText() {
         return text;
     }
@@ -49,6 +60,8 @@ public class StoredReportXML {
         this.text = text;
     }
 
+    @NotNull
+    @Column(name = "date_from")
     public LocalDate getDateFrom() {
         return dateFrom;
     }
@@ -57,6 +70,8 @@ public class StoredReportXML {
         this.dateFrom = dateFrom;
     }
 
+    @NotNull
+    @Column(name = "date_to")
     public LocalDate getDateTo() {
         return dateTo;
     }

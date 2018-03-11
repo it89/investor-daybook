@@ -1,11 +1,16 @@
-package com.github.it89.investordaybook.model.imp.xml;
+package com.github.it89.investordaybook.service.xml;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.*;
-import com.github.it89.investordaybook.service.dao.*;
+import com.github.it89.investordaybook.service.dao.DealBondService;
+import com.github.it89.investordaybook.service.dao.DealStockService;
+import com.github.it89.investordaybook.service.dao.SecurityService;
+import com.github.it89.investordaybook.service.dao.StoredReportXMLService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -15,25 +20,30 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.xml.xpath.*;
 
-@Service("importXMLOpenBroker")
+@Service
+@Repository
+@Transactional
 public class ImportXMLOpenBroker implements ImportXML {
-    @Autowired
-    private SecurityService securityService;
-    @Autowired
-    private DealBondService dealBondService;
-    @Autowired
-    private DealStockService dealStockService;
-    @Autowired
-    private StoredReportXMLService storedReportXMLService;
+    private final SecurityService securityService;
+    private final DealBondService dealBondService;
+    private final DealStockService dealStockService;
+    private final StoredReportXMLService storedReportXMLService;
 
     private XPathFactory pathFactory = XPathFactory.newInstance();
+
+    @Autowired
+    public ImportXMLOpenBroker(SecurityService securityService, DealBondService dealBondService, DealStockService dealStockService, StoredReportXMLService storedReportXMLService) {
+        this.securityService = securityService;
+        this.dealBondService = dealBondService;
+        this.dealStockService = dealStockService;
+        this.storedReportXMLService = storedReportXMLService;
+    }
 
     @Override
     public void importXML(StoredReportXML storedReportXML) {
@@ -79,40 +89,33 @@ public class ImportXMLOpenBroker implements ImportXML {
             String ticker = nodeMap.getNamedItem("ticker").getTextContent();
             String caption = nodeMap.getNamedItem("security_name").getTextContent().trim();
             SecurityType securityType;
-            if (textSecurityType.equalsIgnoreCase("Акции") || textSecurityType.equalsIgnoreCase("GDR")) {
+            if (textSecurityType.equalsIgnoreCase("Акции")) {
                 securityType = SecurityType.STOCK;
             } else if (textSecurityType.equalsIgnoreCase("Облигации")) {
                 securityType = SecurityType.BOND;
+            } else if (textSecurityType.equalsIgnoreCase("GDR")) {
+                securityType = SecurityType.GDR;
             } else {
                 throw new XPathExpressionException("Not valid XML");
             }
+
             Node nodeCodeGRN = nodeMap.getNamedItem("security_grn_code");
             String codeGRN = null;
             if (nodeCodeGRN != null) {
                 codeGRN = nodeCodeGRN.getTextContent();
             }
 
-            Security security;
-            switch (securityType) {
-                case STOCK:
-                    security = new SecurityStock.Builder(isin)
-                        .ticker(ticker)
-                        .caption(caption)
-                        .codeGRN(codeGRN)
-                        .appUser(appUser)
-                        .build();
-                    break;
-                case BOND:
-                    security = new SecurityBond.Builder(isin)
-                            .ticker(ticker)
-                            .caption(caption)
-                            .codeGRN(codeGRN)
-                            .appUser(appUser)
-                            .build();
-                    break;
-                default:
-                    throw new AssertionError("Unknown security type:" + securityType.name());
+            Security security = securityService.findByIsin(isin, appUser);
+            if (security == null) {
+                security = new Security();
+                security.setIsin(isin);
+                security.setAppUser(appUser);
             }
+            security.setTicker(ticker);
+            security.setCaption(caption);
+            security.setCodeGRN(codeGRN);
+            security.setType(securityType);
+
             securityService.save(security);
         }
     }
@@ -152,33 +155,29 @@ public class ImportXMLOpenBroker implements ImportXML {
             BigDecimal volume = new BigDecimal(nodeMap.getNamedItem("volume_currency").getTextContent());
             BigDecimal commission = new BigDecimal(nodeMap.getNamedItem("broker_commission").getTextContent());
 
-            if (security.getType() == SecurityType.STOCK) {
-                DealStock dealStock = new DealStock.Builder(dealNumber)
-                        .security((SecurityStock) security)
-                        .dateTime(dateTime)
-                        .operation(operation)
-                        .amount(amount)
-                        .volume(volume)
-                        .commission(commission)
-                        .appUser(appUser)
-                        .price(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()))
-                        .build();
-                dealStockService.save(dealStock);
-            } else if (security.getType() == SecurityType.BOND){
-                DealBond dealBond = new DealBond.Builder(dealNumber)
-                        .security((SecurityBond) security)
-                        .dateTime(dateTime)
-                        .operation(operation)
-                        .amount(amount)
-                        .volume(volume)
-                        .commission(commission)
-                        .appUser(appUser)
-                        .pricePct(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()))
-                        .accumulatedCouponYield(new BigDecimal(nodeMap.getNamedItem("nkd").getTextContent()))
-                        .build();
+            if (security.getType().isBond()) {
+                DealBond dealBond = new DealBond();
+                dealBond.setPricePct(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()));
+                dealBond.setAccumulatedCouponYield(new BigDecimal(nodeMap.getNamedItem("nkd").getTextContent()));
+                dealBond.setDealNumber(dealNumber);
+                dealBond.setSecurity(security);
+                dealBond.setDateTime(dateTime);
+                dealBond.setOperation(operation);
+                dealBond.setAmount(amount);
+                dealBond.setVolume(volume);
+                dealBond.setCommission(commission);
                 dealBondService.save(dealBond);
             } else {
-                throw new AssertionError("Unknown security type:" + security.getType().name());
+                DealStock dealStock = new DealStock();
+                dealStock.setPrice(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()));
+                dealStock.setDealNumber(dealNumber);
+                dealStock.setSecurity(security);
+                dealStock.setDateTime(dateTime);
+                dealStock.setOperation(operation);
+                dealStock.setAmount(amount);
+                dealStock.setVolume(volume);
+                dealStock.setCommission(commission);
+                dealStockService.save(dealStock);
             }
         }
     }

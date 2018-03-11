@@ -1,5 +1,10 @@
 package com.github.it89.investordaybook.model;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "app_user")
 public class AppUser {
     private long id;
     private String login;
@@ -13,6 +18,8 @@ public class AppUser {
         this.password = password;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -20,6 +27,8 @@ public class AppUser {
         this.id = id;
     }
 
+    @NotNull
+    @Column(name = "login", nullable = false)
     public String getLogin() {
         return login;
     }
@@ -27,6 +36,8 @@ public class AppUser {
         this.login = login;
     }
 
+    @NotNull
+    @Column(name = "password", nullable = false)
     public String getPassword() {
         return password;
     }

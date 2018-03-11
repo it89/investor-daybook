@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface DealStockService {
     DealStock findById(long id);
-    Long findIdByDealNumber(String dealNumber, long idAppUser);
     void save(DealStock dealStock);
     List<DealStock> getList(AppUser appUser);
 }

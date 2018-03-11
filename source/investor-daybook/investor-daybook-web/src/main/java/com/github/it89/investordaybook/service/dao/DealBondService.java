@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface DealBondService {
     DealBond findById(long id);
-    Long findIdByDealNumber(String dealNumber, long idAppUser);
-    void save(DealBond dealBond);
+    void save(DealBond dealStock);
     List<DealBond> getList(AppUser appUser);
 }
