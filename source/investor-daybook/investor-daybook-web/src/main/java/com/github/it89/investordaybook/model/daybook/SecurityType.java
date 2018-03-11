@@ -3,7 +3,8 @@ package com.github.it89.investordaybook.model.daybook;
 public enum SecurityType {
     STOCK(false),
     BOND(true),
-    GDR(false);
+    GDR(false),
+    SHARE(false);
 
     private boolean isBond;
 
