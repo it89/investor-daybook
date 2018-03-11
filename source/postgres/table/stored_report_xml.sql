@@ -10,6 +10,7 @@ CREATE TABLE public.stored_report_xml
     text text COLLATE pg_catalog."default" NOT NULL,
     date_from date NOT NULL,
     date_to date NOT NULL,
+    import_date_time character varying(100) COLLATE pg_catalog."default",
     CONSTRAINT stored_report_xml_pkey PRIMARY KEY (id),
     CONSTRAINT stored_report_xml_app_user_id_fkey FOREIGN KEY (app_user_id)
         REFERENCES public.app_user (id) MATCH SIMPLE
