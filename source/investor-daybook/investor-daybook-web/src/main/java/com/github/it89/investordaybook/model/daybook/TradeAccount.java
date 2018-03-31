@@ -56,4 +56,12 @@ public class TradeAccount {
     public void setAppUser(AppUser appUser) {
         this.appUser = appUser;
     }
+
+    @Override
+    public String toString() {
+        return "TradeAccount{" +
+                "code='" + code + '\'' +
+                ", appUser=" + appUser +
+                '}';
+    }
 }
