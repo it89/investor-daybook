@@ -38,6 +38,7 @@ public class DealStock extends Deal {
                 ", amount=" + amount +
                 ", volume=" + volume +
                 ", commission=" + commission +
+                ", stage=" + stage +
                 '}';
     }
 }

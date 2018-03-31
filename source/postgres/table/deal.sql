@@ -13,6 +13,7 @@ CREATE TABLE public.deal
     amount bigint NOT NULL,
     volume numeric NOT NULL,
     commission numeric NOT NULL,
+    stage integer,
     CONSTRAINT deal_pkey PRIMARY KEY (id),
     CONSTRAINT deal_security_id_fkey FOREIGN KEY (security_id)
         REFERENCES public.security (id) MATCH SIMPLE

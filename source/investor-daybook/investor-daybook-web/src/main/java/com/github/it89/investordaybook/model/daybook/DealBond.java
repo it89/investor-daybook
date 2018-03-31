@@ -48,6 +48,7 @@ public class DealBond extends Deal {
                 ", amount=" + amount +
                 ", volume=" + volume +
                 ", commission=" + commission +
+                ", stage=" + stage +
                 '}';
     }
 }
