@@ -2,10 +2,7 @@ package com.github.it89.investordaybook.service.xml;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.*;
-import com.github.it89.investordaybook.service.dao.DealBondService;
-import com.github.it89.investordaybook.service.dao.DealStockService;
-import com.github.it89.investordaybook.service.dao.SecurityService;
-import com.github.it89.investordaybook.service.dao.StoredReportXMLService;
+import com.github.it89.investordaybook.service.dao.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -34,15 +31,17 @@ public class ImportXMLOpenBroker implements ImportXML {
     private final SecurityService securityService;
     private final DealBondService dealBondService;
     private final DealStockService dealStockService;
+    private final TradeAccountService tradeAccountService;
     private final StoredReportXMLService storedReportXMLService;
 
     private XPathFactory pathFactory = XPathFactory.newInstance();
 
     @Autowired
-    public ImportXMLOpenBroker(SecurityService securityService, DealBondService dealBondService, DealStockService dealStockService, StoredReportXMLService storedReportXMLService) {
+    public ImportXMLOpenBroker(SecurityService securityService, DealBondService dealBondService, DealStockService dealStockService, TradeAccountService tradeAccountService, StoredReportXMLService storedReportXMLService) {
         this.securityService = securityService;
         this.dealBondService = dealBondService;
         this.dealStockService = dealStockService;
+        this.tradeAccountService = tradeAccountService;
         this.storedReportXMLService = storedReportXMLService;
     }
 
@@ -124,7 +123,26 @@ public class ImportXMLOpenBroker implements ImportXML {
         }
     }
 
+    private TradeAccount getTradeAccount(Document document, AppUser appUser) throws XPathExpressionException {
+        XPath xpath = pathFactory.newXPath();
+        XPathExpression expr = xpath.compile("//broker_report ");
+        NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+
+        if (nodes.getLength() == 1) {
+            Node n = nodes.item(0);
+            NamedNodeMap nodeMap = n.getAttributes();
+
+            String accountCode = nodeMap.getNamedItem("acc_client_code").getTextContent().trim();
+            return tradeAccountService.findByCode(accountCode, appUser);
+            // TODO: not found
+
+        } else {
+            throw new AssertionError("Not implemented (ImportXMLOpenBroker.getTradeAccount)");
+        }
+    }
+
     private void importMaidDeals(Document document, AppUser appUser) throws XPathExpressionException {
+        TradeAccount account = getTradeAccount(document, appUser);
         XPath xpath = pathFactory.newXPath();
         XPathExpression expr = xpath.compile("//spot_main_deals_conclusion/item");
         NodeList nodes = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
@@ -160,10 +178,14 @@ public class ImportXMLOpenBroker implements ImportXML {
             BigDecimal commission = new BigDecimal(nodeMap.getNamedItem("broker_commission").getTextContent());
 
             if (security.getType().isBond()) {
-                DealBond dealBond = new DealBond();
+                DealBond dealBond = dealBondService.findByDealNumberAndAccount(dealNumber, account);
+                if (dealBond == null) {
+                    dealBond = new DealBond();
+                    dealBond.setDealNumber(dealNumber);
+                    dealBond.setAccount(account);
+                }
                 dealBond.setPricePct(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()));
                 dealBond.setAccumulatedCouponYield(new BigDecimal(nodeMap.getNamedItem("nkd").getTextContent()));
-                dealBond.setDealNumber(dealNumber);
                 dealBond.setSecurity(security);
                 dealBond.setDateTime(dateTime);
                 dealBond.setOperation(operation);
@@ -172,9 +194,13 @@ public class ImportXMLOpenBroker implements ImportXML {
                 dealBond.setCommission(commission);
                 dealBondService.save(dealBond);
             } else {
-                DealStock dealStock = new DealStock();
+                DealStock dealStock = dealStockService.findByDealNumberAndAccount(dealNumber, account);
+                if (dealStock == null) {
+                    dealStock = new DealStock();
+                    dealStock.setDealNumber(dealNumber);
+                    dealStock.setAccount(account);
+                }
                 dealStock.setPrice(new BigDecimal(nodeMap.getNamedItem("price").getTextContent()));
-                dealStock.setDealNumber(dealNumber);
                 dealStock.setSecurity(security);
                 dealStock.setDateTime(dateTime);
                 dealStock.setOperation(operation);

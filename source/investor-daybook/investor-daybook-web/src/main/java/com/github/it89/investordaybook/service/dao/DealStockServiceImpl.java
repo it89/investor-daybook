@@ -2,6 +2,7 @@ package com.github.it89.investordaybook.service.dao;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.DealStock;
+import com.github.it89.investordaybook.model.daybook.TradeAccount;
 import com.github.it89.investordaybook.repository.DealStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,5 +37,10 @@ public class DealStockServiceImpl implements DealStockService {
     @Transactional(readOnly = true)
     public List<DealStock> getList(AppUser appUser) {
         return dealStockRepository.getAllByAppUser(appUser);
+    }
+
+    @Override
+    public DealStock findByDealNumberAndAccount(String dealNumber, TradeAccount account) {
+        return dealStockRepository.getByDealNumberAndAccount(dealNumber, account);
     }
 }
