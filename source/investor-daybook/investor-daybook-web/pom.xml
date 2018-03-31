@@ -125,7 +125,20 @@
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
         </dependency>
+
+        <!-- Apache POI-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache-poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache-poi.version}</version>
+        </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <id>spring-libs-release</id>

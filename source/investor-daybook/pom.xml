@@ -20,6 +20,7 @@
         <hibernate.version>5.1.0.Final</hibernate.version>
         <mockito.version>1.10.19</mockito.version>
         <junit.version>4.12</junit.version>
+        <apache-poi.version>3.12</apache-poi.version>
     </properties>
 
     <build>
