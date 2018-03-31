@@ -23,6 +23,7 @@ public abstract class Deal {
     protected BigDecimal commission;
     @Nullable
     protected Integer stage;
+    TradeAccount account;
 
     @Nullable
     @Id
@@ -124,5 +125,16 @@ public abstract class Deal {
 
     public void setStage(@Nullable Integer stage) {
         this.stage = stage;
+    }
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "trade_account_id")
+    public TradeAccount getAccount() {
+        return account;
+    }
+
+    public void setAccount(TradeAccount account) {
+        this.account = account;
     }
 }
