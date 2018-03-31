@@ -48,7 +48,7 @@ CREATE INDEX deal_security_id_idx
 
 CREATE UNIQUE INDEX deal_trade_account_id_deal_number_idx
     ON public.deal USING btree
-    (trade_account_id, deal_number COLLATE pg_catalog."default")
+    (trade_account_id, upper(deal_number::text) COLLATE pg_catalog."default")
     TABLESPACE pg_default;
 
 -- Index: deal_trade_account_id_idx
