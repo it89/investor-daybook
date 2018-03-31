@@ -21,6 +21,8 @@ public abstract class Deal {
     protected long amount;
     protected BigDecimal volume;
     protected BigDecimal commission;
+    @Nullable
+    protected Integer stage;
 
     @Nullable
     @Id
@@ -112,5 +114,15 @@ public abstract class Deal {
 
     public void setCommission(BigDecimal commission) {
         this.commission = commission;
+    }
+
+    @Nullable
+    @Column(name = "stage")
+    public Integer getStage() {
+        return stage;
+    }
+
+    public void setStage(@Nullable Integer stage) {
+        this.stage = stage;
     }
 }

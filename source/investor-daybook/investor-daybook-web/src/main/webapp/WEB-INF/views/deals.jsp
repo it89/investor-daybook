@@ -19,6 +19,7 @@
                 <th>Operation</th>
                 <th>Price</th>
                 <th>Amount</th>
+                <th>Stage</th>
             </tr>
             </thead>
             <tbody>
@@ -30,6 +31,7 @@
                     <td>${stockDeal.operation}</td>
                     <td>${stockDeal.price}</td>
                     <td>${stockDeal.amount}</td>
+                    <td>${stockDeal.stage}</td>
                 </tr>
             </c:forEach>
             </tbody>
@@ -45,6 +47,7 @@
                 <th>Price</th>
                 <th>Amount</th>
                 <th>ACY</th>
+                <th>Stage</th>
             </tr>
             </thead>
             <tbody>
@@ -57,6 +60,7 @@
                     <td>${bondDeal.pricePct}</td>
                     <td>${bondDeal.amount}</td>
                     <td>${bondDeal.accumulatedCouponYield}</td>
+                    <td>${bondDeal.stage}</td>
                 </tr>
             </c:forEach>
             </tbody>
