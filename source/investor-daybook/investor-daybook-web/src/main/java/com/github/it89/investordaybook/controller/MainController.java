@@ -132,8 +132,9 @@ public class MainController {
                 throw new RuntimeException("Account \"" + accountCode + "\" not found!");
             }
             List<DealStock> dealStocks = dealStockService.getAllByAccount(account);
+            List<DealBond> dealBonds = dealBondService.getAllByAccount(account);
 
-            try (Workbook wb = TradeReportXLS.createWorkbook(dealStocks)) {
+            try (Workbook wb = TradeReportXLS.createWorkbook(dealStocks, dealBonds)) {
                 response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 response.setHeader("Content-disposition", "attachment; filename=TradeReport.xlsx");
                 wb.write(response.getOutputStream());
@@ -142,9 +143,6 @@ public class MainController {
                 throw new RuntimeException("Error writing file to output stream");
             }
         }
-
-
-
     }
 
     /////////------TEST-------------////////////////////////////////////////

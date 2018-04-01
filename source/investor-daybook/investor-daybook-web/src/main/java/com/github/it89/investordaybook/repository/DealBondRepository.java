@@ -15,4 +15,5 @@ public interface DealBondRepository extends CrudRepository<DealBond, Long> {
 
     @Query("SELECT d FROM DealBond d WHERE UPPER(d.dealNumber) = upper(:dealNumber) AND d.account = :tradeAccount")
     DealBond getByDealNumberAndAccount(@Param("dealNumber") String dealNumber, @Param("tradeAccount") TradeAccount tradeAccount);
+    List<DealBond> getAllByAccountOrderByDateTime(TradeAccount tradeAccount);
 }

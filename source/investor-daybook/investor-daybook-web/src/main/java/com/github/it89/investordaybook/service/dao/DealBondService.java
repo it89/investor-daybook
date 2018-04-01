@@ -11,4 +11,5 @@ public interface DealBondService {
     void save(DealBond dealStock);
     List<DealBond> getList(AppUser appUser);
     DealBond findByDealNumberAndAccount(String dealNumber, TradeAccount account);
+    List<DealBond> getAllByAccount(TradeAccount account);
 }

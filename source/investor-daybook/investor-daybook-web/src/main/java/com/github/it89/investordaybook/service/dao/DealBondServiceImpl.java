@@ -43,4 +43,9 @@ public class DealBondServiceImpl implements DealBondService {
     public DealBond findByDealNumberAndAccount(String dealNumber, TradeAccount account) {
         return dealBondRepository.getByDealNumberAndAccount(dealNumber, account);
     }
+
+    @Override
+    public List<DealBond> getAllByAccount(TradeAccount account) {
+        return dealBondRepository.getAllByAccountOrderByDateTime(account);
+    }
 }
