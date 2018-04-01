@@ -33,7 +33,8 @@ public class TradeReportXLS {
         final int PRICE_COL = 5;
         final int VOLUME_COL = 6;
         final int COMMISSION_COL = 7;
-        final int STAGE_COL = 8;
+        final int CASH_FLOW_COL = 8;
+        final int STAGE_COL = 9;
 
         Sheet sheet = book.createSheet("Stocks");
 
@@ -47,6 +48,7 @@ public class TradeReportXLS {
         row.createCell(PRICE_COL).setCellValue("Price");
         row.createCell(VOLUME_COL).setCellValue("Volume");
         row.createCell(COMMISSION_COL).setCellValue("Commission");
+        row.createCell(CASH_FLOW_COL).setCellValue("Cash flow");
         row.createCell(STAGE_COL).setCellValue("Stage");
 
         for (DealStock deal: dealStocks) {
@@ -67,6 +69,7 @@ public class TradeReportXLS {
             row.createCell(PRICE_COL).setCellValue(deal.getPrice().doubleValue());
             row.createCell(VOLUME_COL).setCellValue(volume.doubleValue());
             row.createCell(COMMISSION_COL).setCellValue(deal.getCommission().negate().doubleValue());
+            row.createCell(CASH_FLOW_COL).setCellValue(deal.getCashFlow().doubleValue());
             if (deal.getStage() != null) {
                 row.createCell(STAGE_COL).setCellValue(deal.getStage());
             }
@@ -86,7 +89,8 @@ public class TradeReportXLS {
         final int VOLUME_COL = 6;
         final int COMMISSION_COL = 7;
         final int ACY_COL = 8;
-        final int STAGE_COL = 9;
+        final int CASH_FLOW_COL = 9;
+        final int STAGE_COL = 10;
 
         Sheet sheet = book.createSheet("Bonds");
 
@@ -101,6 +105,7 @@ public class TradeReportXLS {
         row.createCell(VOLUME_COL).setCellValue("Volume");
         row.createCell(ACY_COL).setCellValue("ACY");
         row.createCell(COMMISSION_COL).setCellValue("Commission");
+        row.createCell(CASH_FLOW_COL).setCellValue("Cash flow");
         row.createCell(STAGE_COL).setCellValue("Stage");
 
         for (DealBond deal: dealBonds) {
@@ -124,6 +129,7 @@ public class TradeReportXLS {
             row.createCell(VOLUME_COL).setCellValue(volume.doubleValue());
             row.createCell(ACY_COL).setCellValue(acy.doubleValue());
             row.createCell(COMMISSION_COL).setCellValue(deal.getCommission().negate().doubleValue());
+            row.createCell(CASH_FLOW_COL).setCellValue(deal.getCashFlow().doubleValue());
             if (deal.getStage() != null) {
                 row.createCell(STAGE_COL).setCellValue(deal.getStage());
             }
