@@ -1,16 +1,18 @@
 package com.github.it89.investordaybook.model.daybook;
 
+import com.github.it89.investordaybook.analytics.CashFlow;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "deal")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Deal {
+public abstract class Deal implements CashFlow {
     @Nullable
     protected Long id;
     protected int version;
@@ -136,5 +138,10 @@ public abstract class Deal {
 
     public void setAccount(TradeAccount account) {
         this.account = account;
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return dateTime.toLocalDate();
     }
 }

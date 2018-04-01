@@ -1,14 +1,10 @@
 package com.github.it89.investordaybook.model.daybook;
 
-import com.github.it89.investordaybook.model.AppUser;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "deal_stock")
@@ -23,6 +19,17 @@ public class DealStock extends Deal {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    @Override
+    public BigDecimal getCashFlow() {
+        BigDecimal cashFlow = commission.negate();
+        if (operation == TradeOperation.BUY) {
+            cashFlow = cashFlow.subtract(volume);
+        } else {
+            cashFlow = cashFlow.add(volume);
+        }
+        return cashFlow;
     }
 
     @Override
