@@ -43,4 +43,9 @@ public class DealStockServiceImpl implements DealStockService {
     public DealStock findByDealNumberAndAccount(String dealNumber, TradeAccount account) {
         return dealStockRepository.getByDealNumberAndAccount(dealNumber, account);
     }
+
+    @Override
+    public List<DealStock> getAllByAccount(TradeAccount account) {
+        return dealStockRepository.getAllByAccountOrderByDateTime(account);
+    }
 }

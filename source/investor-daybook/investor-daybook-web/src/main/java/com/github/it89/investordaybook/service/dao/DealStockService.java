@@ -11,4 +11,5 @@ public interface DealStockService {
     void save(DealStock dealStock);
     List<DealStock> getList(AppUser appUser);
     DealStock findByDealNumberAndAccount(String dealNumber, TradeAccount account);
+    List<DealStock> getAllByAccount(TradeAccount account);
 }

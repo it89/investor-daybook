@@ -15,4 +15,5 @@ public interface DealStockRepository extends CrudRepository<DealStock, Long> {
 
     @Query("SELECT d FROM DealStock d WHERE UPPER(d.dealNumber) = upper(:dealNumber) AND d.account = :tradeAccount")
     DealStock getByDealNumberAndAccount(@Param("dealNumber") String dealNumber, @Param("tradeAccount") TradeAccount tradeAccount);
+    List<DealStock> getAllByAccountOrderByDateTime(TradeAccount tradeAccount);
 }
