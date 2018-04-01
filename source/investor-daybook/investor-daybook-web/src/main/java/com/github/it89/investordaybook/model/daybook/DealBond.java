@@ -3,6 +3,7 @@ package com.github.it89.investordaybook.model.daybook;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -33,6 +34,7 @@ public class DealBond extends Deal {
     }
 
     @Override
+    @Transient
     public BigDecimal getCashFlow() {
         BigDecimal cashFlow = commission.negate();
         if (operation == TradeOperation.BUY) {
