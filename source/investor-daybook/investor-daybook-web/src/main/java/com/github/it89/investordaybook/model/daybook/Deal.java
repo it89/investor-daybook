@@ -141,6 +141,7 @@ public abstract class Deal implements CashFlow {
     }
 
     @Override
+    @Transient
     public LocalDate getDate() {
         return dateTime.toLocalDate();
     }
