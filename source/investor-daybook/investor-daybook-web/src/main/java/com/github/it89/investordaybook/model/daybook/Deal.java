@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "deal")
@@ -144,5 +145,17 @@ public abstract class Deal implements CashFlow {
     @Transient
     public LocalDate getDate() {
         return dateTime.toLocalDate();
+    }
+
+    public static long getAmountSum(List<? extends Deal> deals) {
+        long amountSum = 0;
+        for (Deal deal : deals) {
+            if (deal.getOperation() == TradeOperation.BUY) {
+                amountSum += deal.getAmount();
+            } else {
+                amountSum -= deal.getAmount();
+            }
+        }
+        return amountSum;
     }
 }

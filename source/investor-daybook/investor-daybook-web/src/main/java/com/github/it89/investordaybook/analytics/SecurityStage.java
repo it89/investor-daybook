@@ -14,6 +14,7 @@ public class SecurityStage {
     private LocalDate dateFrom;
     @Nullable
     private LocalDate dateTo;
+    private long amountSum;
     private List<CashFlow> cashFlow = new ArrayList<>();
     private List<CashFlow> cashFlowFeature = new ArrayList<>();
 
@@ -44,6 +45,17 @@ public class SecurityStage {
         return dateTo;
     }
 
+    public long getAmountSum() {
+        return amountSum;
+    }
+
+    public void setAmountSum(long amountSum) {
+        this.amountSum = amountSum;
+        if (amountSum != 0) {
+            dateTo = null;
+        }
+    }
+
     public List<CashFlow> getCashFlow() {
         return cashFlow;
     }
@@ -59,6 +71,7 @@ public class SecurityStage {
                 ", stage=" + stage +
                 ", dateFrom=" + dateFrom +
                 ", dateTo=" + dateTo +
+                ", amountSum=" + amountSum +
                 '}';
     }
 }

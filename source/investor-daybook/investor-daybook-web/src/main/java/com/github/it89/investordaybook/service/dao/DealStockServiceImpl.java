@@ -2,6 +2,7 @@ package com.github.it89.investordaybook.service.dao;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.DealStock;
+import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.TradeAccount;
 import com.github.it89.investordaybook.repository.DealStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,10 @@ public class DealStockServiceImpl implements DealStockService {
     @Override
     public List<DealStock> getAllByAccount(TradeAccount account) {
         return dealStockRepository.getAllByAccountOrderByDateTime(account);
+    }
+
+    @Override
+    public List<DealStock> getAllBySecurityAndStage(Security security, int stage, TradeAccount account) {
+        return dealStockRepository.getAllBySecurityAndStageAndAccountOrderByDateTime(security, stage, account);
     }
 }

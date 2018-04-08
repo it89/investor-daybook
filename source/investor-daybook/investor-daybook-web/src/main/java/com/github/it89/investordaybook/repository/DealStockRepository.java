@@ -2,6 +2,7 @@ package com.github.it89.investordaybook.repository;
 
 import com.github.it89.investordaybook.model.AppUser;
 import com.github.it89.investordaybook.model.daybook.DealStock;
+import com.github.it89.investordaybook.model.daybook.Security;
 import com.github.it89.investordaybook.model.daybook.TradeAccount;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,4 +17,5 @@ public interface DealStockRepository extends CrudRepository<DealStock, Long> {
     @Query("SELECT d FROM DealStock d WHERE UPPER(d.dealNumber) = upper(:dealNumber) AND d.account = :tradeAccount")
     DealStock getByDealNumberAndAccount(@Param("dealNumber") String dealNumber, @Param("tradeAccount") TradeAccount tradeAccount);
     List<DealStock> getAllByAccountOrderByDateTime(TradeAccount tradeAccount);
+    List<DealStock> getAllBySecurityAndStageAndAccountOrderByDateTime(Security security, int stage, TradeAccount account);
 }
