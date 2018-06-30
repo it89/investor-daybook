@@ -14,6 +14,7 @@ public class SecurityStage {
     private LocalDate dateFrom;
     @Nullable
     private LocalDate dateTo;
+    //TODO rename amountSum to amount?
     private long amountSum;
     private List<CashFlow> cashFlow = new ArrayList<>();
     private List<CashFlow> cashFlowFeature = new ArrayList<>();
